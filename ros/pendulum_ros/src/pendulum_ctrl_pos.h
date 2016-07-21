@@ -16,6 +16,7 @@ public:
 
 private:
 	ros::Publisher _local_pos_pub;
+	uint64_t _last_time_ms;
 };
 
 #endif
