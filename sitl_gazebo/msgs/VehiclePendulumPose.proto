@@ -1,0 +1,11 @@
+syntax = "proto2";
+package vehiclependulum_msgs.msgs;
+import "VehiclePose.proto";
+import "PendulumPose.proto";
+
+message VehiclePendulumPose
+{
+  required uint64 time_usec = 1;
+  required pendulum_msgs.msgs.PendulumPose pendulum_pose = 2;
+  repeated vehicle_msgs.msgs.VehiclePose vehicle_pose= 3;
+}

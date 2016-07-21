@@ -1,0 +1,16 @@
+<launch>
+	<!-- vim: set ft=xml noet : -->
+	<!-- base node launch file-->
+
+	<arg name="throttle" default="0.0" />
+	<arg name="roll_rate" default="0.0" />
+	<arg name="pitch_rate" default="0.0" />
+	<arg name="yaw_rate" default = "0.0" />
+
+	<node pkg="attitude_control_demo" type="attitude_control_demo_node" name="attitude_control" required="true" clear_params="true" output="screen">
+		<param name="throttle" type="double" value="$(arg throttle)" />
+		<param name="roll_rate" type="double" value="$(arg roll_rate)" />
+		<param name="pitch_rate" type="double" value="$(arg pitch_rate)" />
+		<param name="yaw_rate" type="double" value="$(arg yaw_rate)" />
+	</node>
+</launch>

@@ -1,0 +1,26 @@
+syntax = "proto2";
+package vehicle_msgs.msgs;
+
+message VehiclePose
+{
+  required uint64 time_usec    = 1;
+  required uint32 mav_sysid    = 2;
+  required float x    = 3;
+  required float y    = 4;
+  required float z    = 5;
+  required float vx   = 6;
+  required float vy   = 7;
+  required float vz   = 8;
+  required float acc_x    = 9;
+  required float acc_y    = 10;
+  required float acc_z    = 11;
+  required float roll     = 12;
+  required float pitch    = 13;
+  required float yaw      = 14;
+  required float roll_rate    = 15;
+  required float pitch_rate    = 16;
+  required float yaw_rate    = 17;
+  required float roll_acc    = 18;
+  required float pitch_acc    = 19;
+  required float yaw_acc    = 20;
+}

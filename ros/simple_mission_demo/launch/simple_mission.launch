@@ -1,0 +1,16 @@
+<launch>
+	<!-- vim: set ft=xml noet : -->
+	<!-- base node launch file-->
+
+	<arg name="waypoint_lat" default="0.0" />
+	<arg name="waypoint_lon" default="0.0" />
+	<arg name="waypoint_alt" default="7.0" />
+	<arg name="use_home" default = "true" />
+
+	<node pkg="simple_mission_demo" type="simple_mission_demo_node" name="simple_mission" required="true" clear_params="true">
+		<param name="waypoint_lat" type="double" value="$(arg waypoint_lat)" />
+		<param name="waypoint_lon" type="double" value="$(arg waypoint_lon)" />
+		<param name="waypoint_alt" type="double" value="$(arg waypoint_alt)" />
+		<param name="use_home" type="bool" value="$(arg use_home)" />
+	</node>
+</launch>

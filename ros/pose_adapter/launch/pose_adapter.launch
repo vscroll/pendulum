@@ -1,0 +1,5 @@
+<launch>
+        <node pkg="pose_adapter" type="pose_adapter_node" name="pose_adapter" required="true" clear_params="true" output="screen">
+        </node>
+</launch>
+

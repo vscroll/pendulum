@@ -1,0 +1,16 @@
+syntax = "proto2";
+package pendulum_msgs.msgs;
+
+message PendulumPose
+{
+  required uint64 time_usec   = 1;
+  required float x      = 2;
+  required float y      = 3;
+  required float z      = 4;
+  required float vx     = 5;
+  required float vy     = 6;
+  required float vz     = 7;
+  required float acc_x  = 8;
+  required float acc_y  = 9;
+  required float acc_z  = 10;
+}
