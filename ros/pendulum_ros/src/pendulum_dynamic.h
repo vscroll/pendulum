@@ -30,7 +30,7 @@ class PendulumDynamic {
 
 public:
 
-	static const double g = 9.81;
+	static constexpr double g = 9.80;
 
 	/*
 	formula 12:

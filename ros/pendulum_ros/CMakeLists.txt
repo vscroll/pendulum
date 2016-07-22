@@ -5,6 +5,7 @@ project(pendulum_ros)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  cmake_modules
   dynamic_reconfigure
   roscpp
   geometry_msgs
@@ -13,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   fmaros_msgs
 )
 
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
+include(EnableCXX11)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

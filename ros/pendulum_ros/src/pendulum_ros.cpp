@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	int ctrl_module = 0;
 	nh.param<int>("ctrl_module", ctrl_module, CTRL_MODULE_ATT);
 
-	PendulumCtrlBase* pendulum_ctrl = NULL;
+	PendulumCtrlBase* pendulum_ctrl = nullptr;
 	if (ctrl_module == CTRL_MODULE_ATT) {
 		pendulum_ctrl = (PendulumCtrlBase*)(new PendulumCtrlAtt());
 	} else if (ctrl_module == CTRL_MODULE_POS) {
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 	} else {
 	}
 
-	if (pendulum_ctrl == NULL) {
+	if (pendulum_ctrl == nullptr) {
 		ROS_INFO("select ctrl module");
 		return 1;
 	}

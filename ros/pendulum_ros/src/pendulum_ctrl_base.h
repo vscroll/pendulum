@@ -63,13 +63,13 @@ protected:
 	ros::ServiceClient _arming_client;
 	ros::ServiceClient _set_mode_client;
 
-	static const double DEFAULT_PENDULUM_L = 0.6;
-	static const double DEFAULT_PENDULUM_X_P = 0.5;
-	static const double DEFAULT_PENDULUM_X_I = 0.0;
-	static const double DEFAULT_PENDULUM_X_D = 0.0;
-	static const double DEFAULT_PENDULUM_Y_P = 0.5;
-	static const double DEFAULT_PENDULUM_Y_I = 0.0;
-	static const double DEFAULT_PENDULUM_Y_D = 0.0;
+	static constexpr double DEFAULT_PENDULUM_L = 0.6;
+	static constexpr double DEFAULT_PENDULUM_X_P = 0.5;
+	static constexpr double DEFAULT_PENDULUM_X_I = 0.0;
+	static constexpr double DEFAULT_PENDULUM_X_D = 0.0;
+	static constexpr double DEFAULT_PENDULUM_Y_P = 0.5;
+	static constexpr double DEFAULT_PENDULUM_Y_I = 0.0;
+	static constexpr double DEFAULT_PENDULUM_Y_D = 0.0;
 
 	double _pendulum_l;
 	fmaros_msgs::PendulumPose _pose_local;
@@ -81,17 +81,17 @@ protected:
 
 	bool _reset_pose;
 
-	static const int PENDULUM_CMD_DISABLE = 0;
-	static const int PENDULUM_CMD_START = 1;
-	static const int PENDULUM_CMD_STOP = 2;
+	static constexpr int PENDULUM_CMD_DISABLE = 0;
+	static constexpr int PENDULUM_CMD_START = 1;
+	static constexpr int PENDULUM_CMD_STOP = 2;
 
-	static const int VEHICLE_CMD_DISABLE = 0;
-	static const int VEHICLE_CMD_ARMED = 1;
-	static const int VEHICLE_CMD_DISARMED = 2;
-	static const int VEHICLE_CMD_TAKEOFF = 3;
-	static const int VEHICLE_CMD_POSCTL = 4;
-	static const int VEHICLE_CMD_OFFBOARD = 5;
-	static const int VEHICLE_CMD_SEQUENCE = 6;
+	static constexpr int VEHICLE_CMD_DISABLE = 0;
+	static constexpr int VEHICLE_CMD_ARMED = 1;
+	static constexpr int VEHICLE_CMD_DISARMED = 2;
+	static constexpr int VEHICLE_CMD_TAKEOFF = 3;
+	static constexpr int VEHICLE_CMD_POSCTL = 4;
+	static constexpr int VEHICLE_CMD_OFFBOARD = 5;
+	static constexpr int VEHICLE_CMD_SEQUENCE = 6;
 
 };
 
