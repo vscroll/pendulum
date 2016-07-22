@@ -14,6 +14,7 @@ PendulumCtrlBase::PendulumCtrlBase()
 	_reset_pose(false) {
 	
 	_pendulum_sub = _nh.subscribe("/FMA/Pendulum/Pose", 100, &PendulumCtrlBase::pendulum_pose_callback, this);
+	_vehicle_sub = _nh.subscribe("/FMA/Vehicle/Pose", 100, &PendulumCtrlBase::vehicle_pose_callback, this);
 
 	_arming_client = _nh.serviceClient<mavros_msgs::CommandBool>("/mavros/cmd/arming");
 	_set_mode_client = _nh.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
@@ -204,5 +205,6 @@ void PendulumCtrlBase::pendulum_pose_callback(const fmaros_msgs::PendulumPose::C
 
 void PendulumCtrlBase::vehicle_pose_callback(const fmaros_msgs::VehiclePose::ConstPtr& msg) {
 
+	_vehicle_pose_local = *msg;
 }
 

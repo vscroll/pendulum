@@ -7,11 +7,21 @@
 #include <mavros_msgs/CommandBool.h>
 
 PendulumCtrlPos::PendulumCtrlPos() {
-	_local_pos_pub = _nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 10);
+	_local_pos_pub = _nh.advertise<geometry_msgs::PoseStamped>("/mavros/setpoint_position/local", 10);
+	_last_time_ms = 0;
 }
 
 PendulumCtrlPos::~PendulumCtrlPos() {
 
+}
+
+static geometry_msgs::PoseStamped transform_frame_enu_ned(geometry_msgs::PoseStamped pose) {
+	geometry_msgs::PoseStamped t_pose;
+	t_pose.pose.position.x = -pose.pose.position.y;
+	t_pose.pose.position.y = pose.pose.position.x;
+	t_pose.pose.position.z = pose.pose.position.z;
+
+	return t_pose;
 }
 
 void PendulumCtrlPos::ctrl_thread() {
@@ -49,6 +59,8 @@ void PendulumCtrlPos::ctrl_thread() {
 
 			_pendulum_output_x = _pendulum_x_pid.getOutput();
 			_pendulum_output_y = _pendulum_y_pid.getOutput();
+			//_pendulum_output_x = _pose.position.x - _vehicle_pose_local.position.x;
+			//_pendulum_output_y = _pose.position.y - _vehicle_pose_local.position.y;
 
 			double vehicle_vel_acc_x = 0.0;
 			double vehicle_vel_acc_y = 0.0;
@@ -60,7 +72,7 @@ void PendulumCtrlPos::ctrl_thread() {
 								&vehicle_vel_acc_x,
 								&vehicle_vel_acc_y);
 			//ROS_INFO("formula 12:%f %f", vehicle_vel_acc_x, vehicle_vel_acc_y);
-
+#if 0
 			double angle_x = 0.0;
 			double angle_y = 0.0;
 			double a = 0;
@@ -74,6 +86,27 @@ void PendulumCtrlPos::ctrl_thread() {
 									angle_x, angle_y,
 									&vehicle_rate_x, &vehicle_rate_y);
 			//ROS_INFO("formula 7:%f %f", vehicle_rate_x, vehicle_rate_y);
+#endif
+
+			if (_last_time_ms == 0) {
+				_last_time_ms = ros::Time::now().toSec() * 1000;
+			} else {
+				uint64_t dt_ms = ros::Time::now().toSec() * 1000 - _last_time_ms;
+				_last_time_ms = ros::Time::now().toSec() * 1000;
+				//ROS_INFO("secs %f dt_ms %ld", (dt_ms / 1000.0), dt_ms);
+
+				double x = _vehicle_pose_local.position.x + 0.5 * vehicle_vel_acc_x * (dt_ms / 1000.0) * (dt_ms / 1000.0);
+				double y = _vehicle_pose_local.position.y + 0.5 * vehicle_vel_acc_y * (dt_ms / 1000.0) * (dt_ms / 1000.0);
+				//ROS_INFO("accx %f accy %f x %f y %f", vehicle_vel_acc_x, vehicle_vel_acc_y, x, y);
+
+				if (_local_pos_pub) {
+					geometry_msgs::PoseStamped pose;
+					pose.pose.position.x = x;
+					pose.pose.position.y = y;
+					pose.pose.position.z = 5;
+					_local_pos_pub.publish(transform_frame_enu_ned(pose));
+				}
+			}
 		}
 
 		_rate.sleep();
