@@ -14,6 +14,15 @@ find_package(catkin REQUIRED COMPONENTS
   fmaros_msgs
 )
 
+find_package(Eigen3)
+if(NOT EIGEN3_FOUND)
+  # Fallback to cmake_modules
+  find_package(cmake_modules REQUIRED)
+  find_package(Eigen REQUIRED)
+  set(EIGEN3_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
+  set(EIGEN3_LIBRARIES ${EIGEN_LIBRARIES})
+endif()
+
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 include(EnableCXX11)
 ## System dependencies are found with CMake's conventions
@@ -121,7 +130,9 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -137,6 +148,8 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(pendulum_ros_node src/pendulum_ros_node.cpp)
 add_executable(pendulum_ros_node 
+	lib/ftf_quaternion_utils.cpp
+	lib/ftf_frame_conversions.cpp
 	src/pendulum_ros.cpp
 	src/pendulum_ctrl_base.cpp
 	src/pendulum_ctrl_att.cpp

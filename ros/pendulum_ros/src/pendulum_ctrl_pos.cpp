@@ -15,15 +15,6 @@ PendulumCtrlPos::~PendulumCtrlPos() {
 
 }
 
-static geometry_msgs::PoseStamped transform_frame_enu_ned(geometry_msgs::PoseStamped pose) {
-	geometry_msgs::PoseStamped t_pose;
-	t_pose.pose.position.x = -pose.pose.position.y;
-	t_pose.pose.position.y = pose.pose.position.x;
-	t_pose.pose.position.z = pose.pose.position.z;
-
-	return t_pose;
-}
-
 void PendulumCtrlPos::ctrl_thread() {
 	ROS_INFO("%s(%d): %s", __FILE__, __LINE__, __FUNCTION__);
 	while(ros::ok()) {
@@ -100,11 +91,24 @@ void PendulumCtrlPos::ctrl_thread() {
 				//ROS_INFO("accx %f accy %f x %f y %f", vehicle_vel_acc_x, vehicle_vel_acc_y, x, y);
 
 				if (_local_pos_pub) {
+					// enu->ned x = x y = -y z = -z
+					auto p_ned = mavros::ftf::transform_frame_enu_ned(Eigen::Vector3d(x, -y, -_vehicle_pose_local.position.z));
+					// keep yaw angle
+					Eigen::Quaterniond q_enu = mavros::ftf::quaternion_from_rpy(0, 0, 0);
+
+					auto q_ned = mavros::ftf::transform_orientation_enu_ned(
+						mavros::ftf::transform_orientation_aircraft_baselink(q_enu));
+
 					geometry_msgs::PoseStamped pose;
-					pose.pose.position.x = x;
-					pose.pose.position.y = y;
-					pose.pose.position.z = 5;
-					_local_pos_pub.publish(transform_frame_enu_ned(pose));
+					pose.pose.position.x = p_ned[0];
+					pose.pose.position.y = p_ned[1];
+					pose.pose.position.z = p_ned[2];
+					pose.pose.orientation.x = q_ned.x();
+					pose.pose.orientation.y = q_ned.y();
+					pose.pose.orientation.z = q_ned.z();
+					pose.pose.orientation.w = q_ned.w();
+
+					_local_pos_pub.publish(pose);
 				}
 			}
 		}
