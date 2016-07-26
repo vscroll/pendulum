@@ -3,14 +3,13 @@ package pendulum_msgs.msgs;
 
 message PendulumPose
 {
-  required uint64 time_usec   = 1;
-  required float x      = 2;
-  required float y      = 3;
-  required float z      = 4;
-  required float vx     = 5;
-  required float vy     = 6;
-  required float vz     = 7;
-  required float acc_x  = 8;
-  required float acc_y  = 9;
-  required float acc_z  = 10;
+  required float x      = 1;
+  required float y      = 2;
+  required float z      = 3;
+  required float vx     = 4;
+  required float vy     = 5;
+  required float vz     = 6;
+  required float acc_x  = 7;
+  required float acc_y  = 8;
+  required float acc_z  = 9;
 }

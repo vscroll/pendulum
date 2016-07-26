@@ -1,6 +1,7 @@
 find_package(Protobuf REQUIRED)
 
 set (msgs
+  Timestamp.proto
   PendulumPose.proto
   VehiclePose.proto
   VehiclePendulumPose.proto

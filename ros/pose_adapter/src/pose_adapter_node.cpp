@@ -4,6 +4,7 @@
 #include <sstream>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -24,6 +25,8 @@ int main(int argc, char **argv)
   socklen_t  addr_len = sizeof(struct sockaddr_in);
   char buffer[4096];
   char buf[128];
+  struct timeval tv;
+  struct timezone tz;
 
   if((sockfd=socket(AF_INET,SOCK_DGRAM,0))<0){
 	  perror ("socket");
@@ -46,7 +49,7 @@ int main(int argc, char **argv)
   ros::Publisher pendulum_pub = n.advertise<fmaros_msgs::PendulumPose>("/FMA/Pendulum/Pose", 10);
   ros::Publisher vehicle_pub = n.advertise<fmaros_msgs::VehiclePose>("/FMA/Vehicle/Pose", 10);
 
-  ros::Rate loop_rate(200);
+  ros::Rate loop_rate(1000);
 
   while (ros::ok())
   {
@@ -59,15 +62,23 @@ int main(int argc, char **argv)
 
     if (len > 0) {
         vehiclependulum_msgs::msgs::VehiclePendulumPose pose_message_;
-
 	pose_message_.ParseFromArray(buffer, len);
-	int64_t time = pose_message_.time_usec();
+
+	uint32_t seq = pose_message_.seq();
+	timestamp::Timestamp stamp =  pose_message_.stamp();
+
+	gettimeofday(&tv, &tz);
+	//time delay test
+	//printf("seq %d delay %ld us\n", seq, (tv.tv_sec - stamp.sec()) * 1000000 + tv.tv_usec - stamp.nsec());
+
 	pendulum_msgs::msgs::PendulumPose pendulumpose = pose_message_.pendulum_pose();
 	vehicle_msgs::msgs::VehiclePose vehiclepose =  pose_message_.vehicle_pose(0);
 
 	fmaros_msgs::PendulumPose pendulum_pose;
-
-	pendulum_pose.header.stamp.nsec = time;
+	//auto fill up
+	//pendulum_pose.header.seq = seq;
+	pendulum_pose.header.stamp.sec = stamp.sec();
+	pendulum_pose.header.stamp.nsec = stamp.nsec();
 	pendulum_pose.position.x = pendulumpose.x();
 	pendulum_pose.position.y = pendulumpose.y();
 	pendulum_pose.position.z = pendulumpose.z();
@@ -82,6 +93,8 @@ int main(int argc, char **argv)
 
 	fmaros_msgs::VehiclePose vehicle_pose;
 
+	vehicle_pose.header.stamp.sec = stamp.sec();
+	vehicle_pose.header.stamp.nsec = stamp.nsec();
 	vehicle_pose.position.x =vehiclepose.x();
 	vehicle_pose.position.y =vehiclepose.y();
 	vehicle_pose.position.z =vehiclepose.z();

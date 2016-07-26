@@ -5,6 +5,10 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/CommandBool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 PendulumCtrlBase::PendulumCtrlBase()
 	:_nh( "~" ),
@@ -195,6 +199,14 @@ void PendulumCtrlBase::pendulum_pose_callback(const fmaros_msgs::PendulumPose::C
 */
 	_pose_local = *msg;
 
+	struct timeval tv;
+	struct timezone tz;
+
+	gettimeofday(&tv, &tz);
+
+//	time delay test
+//	printf("seq %d delay %ld us\n", _pose_local.header.seq,
+//		(tv.tv_sec - _pose_local.header.stamp.sec) * 1000000 + tv.tv_usec - _pose_local.header.stamp.nsec);
 /*
 	ROS_INFO("Pendulum Pose: %f %f %f %f %f %f %f %f %f",
 		_pose_local.position.x, _pose_local.position.y, _pose_local.position.z,

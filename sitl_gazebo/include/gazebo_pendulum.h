@@ -20,6 +20,9 @@
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 #include "VehiclePendulumPose.pb.h"
 #include "Reset.pb.h"
@@ -44,6 +47,9 @@ namespace gazebo {
     // socket
     int _fd;
     struct sockaddr_in _srcaddr;
+
+    // message sequence
+    uint32_t seq;
 
     std::string namespace_;
     std::string link_name_;

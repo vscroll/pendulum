@@ -24,10 +24,19 @@ void PendulumCtrlPos::ctrl_thread() {
 			continue;
 		}
 
+		static bool data_warning_once = false;
 		if (_pose.header.seq == _pose_local.header.seq) {
-			ROS_INFO("no pose data");
+			if (!data_warning_once) {
+				ROS_INFO("no pose data");
+				data_warning_once = true;
+			}
 			_rate.sleep();
 			continue;
+		} else {
+			if (data_warning_once) {
+				ROS_INFO("obtain pose data");
+			}
+			data_warning_once = false;
 		}
 
 		_pose = _pose_local;

@@ -1,0 +1,9 @@
+syntax = "proto2";
+package timestamp;
+
+message Timestamp
+{
+  required uint64 sec = 1;
+  required uint32 nsec = 2;
+}
+

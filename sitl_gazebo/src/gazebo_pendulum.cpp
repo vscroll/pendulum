@@ -28,6 +28,7 @@ PendulumPlugin::~PendulumPlugin() {
 
 void PendulumPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   namespace_.clear();
+  seq = 0;
 
   if (_sdf->HasElement("robotNamespace"))
     namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>();
@@ -103,6 +104,23 @@ void PendulumPlugin::ResetCallback(ResetPtr& reset_msg)
 
   // Called by the world update start event
 void PendulumPlugin::OnUpdate(const common::UpdateInfo & /*_info*/) {
+
+  struct timeval tv;
+  struct timezone tz;
+
+  gettimeofday(&tv, &tz);
+
+  timestamp::Timestamp* stamp = new timestamp::Timestamp();
+  stamp->set_sec(tv.tv_sec);
+  stamp->set_nsec(tv.tv_usec);
+
+  pose_message_.set_allocated_stamp(stamp);
+  pose_message_.set_seq(seq);
+
+  //printf("tv_sec = %ld, tv_usec = %ld, seq %d\n", tv.tv_sec, tv.tv_usec, seq);
+
+  seq ++;
+
   // Get pendulum link status
 
   // Get the pose
@@ -139,15 +157,13 @@ void PendulumPlugin::OnUpdate(const common::UpdateInfo & /*_info*/) {
   // Test
   //base_link.at(0)->SetAngularVel(math::Vector3(0, 0, 5));
 
-  common::Time current_time = model_->GetWorld()->GetSimTime();
-  uint64_t usec = current_time.sec * 1000 + current_time.nsec / 1000000;
+  //common::Time current_time = model_->GetWorld()->GetSimTime();
+  //uint64_t usec = current_time.sec * 1000 + current_time.nsec / 1000000;
 
   // vehicle & pendulum pose
-  pose_message_.set_time_usec(usec);
 
   // pendulum pose
   pendulum_msgs::msgs::PendulumPose* pendulumpose = new pendulum_msgs::msgs::PendulumPose();
-  pendulumpose->set_time_usec(usec);
   pendulumpose->set_x(link_pose.pos[0]);
   pendulumpose->set_y(link_pose.pos[1]);
   pendulumpose->set_z(link_pose.pos[2]);
@@ -162,7 +178,6 @@ void PendulumPlugin::OnUpdate(const common::UpdateInfo & /*_info*/) {
   pose_message_.set_allocated_pendulum_pose(pendulumpose);
 
   // vehicle pose
-  vehiclepose_->set_time_usec(usec);
   vehiclepose_->set_mav_sysid(99);
   vehiclepose_->set_x(model_pose.pos[0]);
   vehiclepose_->set_y(model_pose.pos[1]);
