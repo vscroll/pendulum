@@ -93,10 +93,14 @@ void PendulumCtrlAtt::ctrl_thread() {
 			}
 
 			if (_attitude_pub) {
+				// transform x = -x y = y z = z
+				auto rpy = mavros::ftf::transform_frame_aircraft_baselink(Eigen::Vector3d(-0.5, 0.0, 0.0));
+
 				geometry_msgs::TwistStamped attitude;
-				attitude.twist.angular.x = 0;//vehicle_rate_x;
-				attitude.twist.angular.y = 0;//vehicle_rate_y;
-				attitude.twist.angular.z = 0.1;
+				attitude.twist.angular.x = rpy[0];
+				attitude.twist.angular.y = rpy[1];
+				attitude.twist.angular.z = rpy[2];
+
 				_attitude_pub.publish(attitude);
 			}
 		}
