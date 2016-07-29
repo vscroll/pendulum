@@ -5,7 +5,12 @@
 #include <geometry_msgs/Vector3.h>
 #include <math.h>
 
+/*
+ ==============================================
 
+ <A Flying Inverted Pendulum.pdf>
+ ==============================================
+ */
 
 
 /*
@@ -46,21 +51,21 @@ public:
 	s_acc == -(y_acc*(L^2 - r^2)^2 - 2*s^2*(y_acc*(L^2 - r^2) - r*r_vel*s_vel) + s^4*y_acc + s*(L^2*(r_vel^2 + s_vel^2 - l*(g + z_acc)) - r^3*r_acc + r^2*(- s_vel^2 + l*(g + z_acc)) + L^2*r*r_acc) - s^3*(r_vel^2 - l*(g + z_acc) + r*r_acc))/(l^2*(L^2 - s^2))
 
 	*/
-	static void formula_12(const double pendulum_l,
-						const double pendulum_x,
-						const double pendulum_y,
+	static bool formula_12(const double pendulum_l,
+						const double pendulum_s,
+						const double pendulum_r,
 						const geometry_msgs::Vector3& pendulum_vel,
 						const geometry_msgs::Vector3& pendulum_vel_acc,
 						double* vehicle_vel_acc_x,
 						double* vehicle_vel_acc_y) {
 
-		double l = sqrt(pow(pendulum_l, 2) - pow(pendulum_x, 2) - pow(pendulum_y, 2));
+		double l = sqrt(pow(pendulum_l, 2) - pow(pendulum_r, 2) - pow(pendulum_s, 2));
 		double z_acc = 0;
 
 		double l_2 = pow(l, 2);
 		double L_2 = pow(pendulum_l, 2);
 
-		double r = pendulum_x;
+		double r = pendulum_r;
 		double r_2 = pow(r, 2);
 		double r_3 = pow(r, 3);
 		double r_4 = pow(r, 4);
@@ -68,7 +73,7 @@ public:
 		double r_vel_2 = pow(pendulum_vel.x, 2);
 		double r_acc = pendulum_vel_acc.x;
 
-		double s = pendulum_y;
+		double s = pendulum_s;
 		double s_2 = pow(s, 2);
 		double s_3 = pow(s, 3);
 		double s_4 = pow(s, 4);
@@ -103,6 +108,8 @@ public:
 			2*r*r_vel*s_vel*s_2 + (r_acc*L_2*r + (r_vel_2 + s_vel_2 - l*(g + z_acc))*L_2 -
 			r_acc*r_3 + (l*(g + z_acc) - s_vel_2)*r_2)*s)/(l_2*(L_2 - s_2))))/(pow((L_2 - r_2), 2) -
 			2*s_2*(L_2 - r_2) + s_4);
+
+		return isnan(*vehicle_vel_acc_x) || isnan(*vehicle_vel_acc_y);
 	}
 
 	/*
@@ -217,6 +224,63 @@ public:
 		double rate_z = 0;
 		*vehicle_rate_x = rate_x - sin(angle_y)*rate_z;
 		*vehicle_rate_y = cos(angle_x)*rate_y + sin(angle_x)*cos(angle_y)*rate_z;
+	}
+};
+
+/*
+ ==============================================
+
+ <Cascaded control for balancing an inverted pendulum on a flying quadrotor.pdf>
+ ================================================
+*/
+
+class PendulumDynamic2 {
+
+	static constexpr double g = 9.80;
+
+	/*
+	formula 4, 5:
+
+	*/
+	static bool formula_4_5(const double pendulum_l,
+						const double pendulum_r,
+						const double pendulum_s,
+						const geometry_msgs::Vector3& pendulum_vel,
+						const geometry_msgs::Vector3& pendulum_vel_acc,
+						double* vehicle_vel_acc_x,
+						double* vehicle_vel_acc_y) {
+
+		double l = sqrt(pow(pendulum_l, 2) - pow(pendulum_r, 2) - pow(pendulum_s, 2));
+		double z_acc = 0;
+
+		double l_2 = pow(l, 2);
+		double L_2 = pow(pendulum_l, 2);
+
+		double r = pendulum_r;
+		double r_2 = pow(r, 2);
+		double r_3 = pow(r, 3);
+		double r_vel = pendulum_vel.x;
+		double r_vel_2 = pow(pendulum_vel.x, 2);
+		double r_acc = pendulum_vel_acc.x;
+
+		double s = pendulum_s;
+		double s_2 = pow(s, 2);
+		double s_3 = pow(s, 3);
+		double s_vel = pendulum_vel.y;
+		double s_vel_2 = pow(s_vel, 2);
+		double s_acc = pendulum_vel_acc.y;
+
+		*vehicle_vel_acc_x =
+			(3*r*l*(g+z_acc) + 4*(r_3*(s_vel_2 + s*s_acc) - 2*r_2*s*r_vel*s_vel +
+			r*(-L_2*s*s_acc + s_3*s_acc + s_2*r_vel_2 - L_2*r_vel_2 - L_2*s_vel_2))/l_2 -
+			4*(L_2 - s_2)*r_acc)/(3*l_2);
+
+		*vehicle_vel_acc_y =
+			(3*s*l*(g+z_acc) + 4*(s_3*(r_vel_2 + r*r_acc) - 2*s_2*r*s_vel*r_vel +
+			s*(-L_2*r*r_acc + r_3*r_acc + r_2*s_vel_2 - L_2*s_vel_2 - L_2*r_vel_2))/l_2 -
+			4*(L_2 - r_2)*s_acc)/(3*l_2);
+
+		return isnan(*vehicle_vel_acc_x) || isnan(*vehicle_vel_acc_y);
 	}
 };
 
