@@ -51,27 +51,34 @@ void PendulumCtrlPos::ctrl_thread() {
 			_pendulum_x_pid.reset();
 			_pendulum_y_pid.reset();
 
-			_pendulum_x_pid.setReference(_pose.position.x);
-			_pendulum_y_pid.setReference(_pose.position.y);
+			_pendulum_x_pid.setReference(0);
+			_pendulum_y_pid.setReference(0);
 		} else {
-			_pendulum_x_pid.setFeedback(_pose.position.x);
-			_pendulum_y_pid.setFeedback(_pose.position.y);
+			_pendulum_x_pid.setFeedback(_pose.position.x - _vehicle_pose_local.position.x);
+			_pendulum_y_pid.setFeedback(_pose.position.y - _vehicle_pose_local.position.y);
 
-			_pendulum_output_x = _pendulum_x_pid.getOutput();
-			_pendulum_output_y = _pendulum_y_pid.getOutput();
-			//_pendulum_output_x = _pose.position.x - _vehicle_pose_local.position.x;
-			//_pendulum_output_y = _pose.position.y - _vehicle_pose_local.position.y;
+			_pendulum_output_r = _pose.position.x - _vehicle_pose_local.position.x;//_pendulum_x_pid.getOutput();
+			_pendulum_output_s = _pose.position.y - _vehicle_pose_local.position.y;//_pendulum_y_pid.getOutput();
 
 			double vehicle_vel_acc_x = 0.0;
 			double vehicle_vel_acc_y = 0.0;
+			ROS_INFO("xy[%f %f]", _pendulum_output_r, _pendulum_output_s);
 			PendulumDynamic::formula_12(_pendulum_l,
-								_pendulum_output_x,
-								_pendulum_output_y,
+								_pendulum_output_r,
+								_pendulum_output_s,
 								_pose.velocity,
 								_pose.vel_acc,
 								&vehicle_vel_acc_x,
 								&vehicle_vel_acc_y);
-			//ROS_INFO("formula 12:%f %f", vehicle_vel_acc_x, vehicle_vel_acc_y);
+			ROS_INFO("accel1[%f %f]", vehicle_vel_acc_x, vehicle_vel_acc_y);
+			PendulumDynamic2::formula_4_5(_pendulum_l,
+								_pendulum_output_r,
+								_pendulum_output_s,
+								_pose.velocity,
+								_pose.vel_acc,
+								&vehicle_vel_acc_x,
+								&vehicle_vel_acc_y);
+			ROS_INFO("accel2:[%f %f]", vehicle_vel_acc_x, vehicle_vel_acc_y);
 #if 0
 			double angle_x = 0.0;
 			double angle_y = 0.0;

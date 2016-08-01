@@ -77,8 +77,8 @@ protected:
 	fmaros_msgs::PendulumPose _pose;
 	fmaros_msgs::VehiclePose _vehicle_pose_local;
 
-	double _pendulum_output_x;
-	double _pendulum_output_y;
+	double _pendulum_output_r;
+	double _pendulum_output_s;
 
 	bool _reset_pose;
 

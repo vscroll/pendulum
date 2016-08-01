@@ -58,14 +58,14 @@ void PendulumCtrlAtt::ctrl_thread() {
 			_pendulum_x_pid.setFeedback(_pose.position.x);
 			_pendulum_y_pid.setFeedback(_pose.position.y);
 
-			_pendulum_output_x = _pendulum_x_pid.getOutput();
-			_pendulum_output_y = _pendulum_y_pid.getOutput();
+			_pendulum_output_r = _pendulum_x_pid.getOutput();
+			_pendulum_output_s = _pendulum_y_pid.getOutput();
 
 			double vehicle_vel_acc_x = 0.0;
 			double vehicle_vel_acc_y = 0.0;
 			PendulumDynamic::formula_12(_pendulum_l,
-								_pendulum_output_x,
-								_pendulum_output_y,
+								_pendulum_output_r,
+								_pendulum_output_s,
 								_pose.velocity,
 								_pose.vel_acc,
 								&vehicle_vel_acc_x,
@@ -89,7 +89,7 @@ void PendulumCtrlAtt::ctrl_thread() {
 /*
 			ROS_INFO("result:%d    %f %f %f %f    %f %f %f %f    %f %f    %f %f %f %f    %f %f",
 				_pose.header.seq,
-				_pose.position.x, _pose.position.y, _pendulum_output_x, _pendulum_output_y,
+				_pose.position.x, _pose.position.y, _pendulum_output_r, _pendulum_output_s,
 				_pose.velocity.x, _pose.velocity.y, _pose.vel_acc.x, _pose.vel_acc.y,
 				vehicle_vel_acc_x, vehicle_vel_acc_y,
 				angle_x, angle_y, a, a/(2*PendulumDynamic::g),

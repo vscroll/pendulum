@@ -236,6 +236,7 @@ public:
 
 class PendulumDynamic2 {
 
+public:
 	static constexpr double g = 9.80;
 
 	/*
