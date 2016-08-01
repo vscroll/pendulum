@@ -24,7 +24,8 @@ PendulumCtrlBase::PendulumCtrlBase()
 	_set_mode_client = _nh.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
 
 	_pendulum_x_pid.setGains(DEFAULT_PENDULUM_X_P, DEFAULT_PENDULUM_X_I, DEFAULT_PENDULUM_X_D);
-	_pendulum_x_pid.setGains(DEFAULT_PENDULUM_Y_P, DEFAULT_PENDULUM_Y_I, DEFAULT_PENDULUM_Y_D);
+	_pendulum_y_pid.setGains(DEFAULT_PENDULUM_Y_P, DEFAULT_PENDULUM_Y_I, DEFAULT_PENDULUM_Y_D);
+	_vehicle_z_pid.setGains(DEFAULT_VEHICLE_Z_P, DEFAULT_VEHICLE_Z_I, DEFAULT_VEHICLE_Z_D);
 
 	dynamic_reconfigure::Server<pendulum_ros::PendulumConfig>::CallbackType f;
 	f = boost::bind(&PendulumCtrlBase::cfg_pid_callback, this, _1, _2);
@@ -39,7 +40,7 @@ PendulumCtrlBase::~PendulumCtrlBase() {
 
 void PendulumCtrlBase::cfg_pid_callback(pendulum_ros::PendulumConfig &config, uint32_t level) {
 
-	ROS_INFO("Reconfigure Request: %f %f %f %f %f %f %f %d %d",
+	ROS_INFO("Reconfigure Request: %f %f %f %f %f %f %f  %f %f %f %d %d",
 			config.pendulum_l,
 			config.pendulum_x_p,
 			config.pendulum_x_i, 
@@ -47,6 +48,9 @@ void PendulumCtrlBase::cfg_pid_callback(pendulum_ros::PendulumConfig &config, ui
 			config.pendulum_y_p,
 			config.pendulum_y_i, 
 			config.pendulum_y_d,
+			config.vehicle_z_p,
+			config.vehicle_z_i,
+			config.vehicle_z_d,
 			config.pendulum_cmd,
 			config.vehicle_cmd
 			);
@@ -54,6 +58,7 @@ void PendulumCtrlBase::cfg_pid_callback(pendulum_ros::PendulumConfig &config, ui
 	_pendulum_l = config.pendulum_l;
 	_pendulum_x_pid.setGains(config.pendulum_x_p, config.pendulum_x_i, config.pendulum_x_d);
 	_pendulum_y_pid.setGains(config.pendulum_y_p, config.pendulum_y_i, config.pendulum_y_d);
+	_vehicle_z_pid.setGains(config.vehicle_z_p, config.vehicle_z_i, config.vehicle_z_d);
 
 	if (config.pendulum_cmd == PENDULUM_CMD_START) {
 		_reset_pose = true;

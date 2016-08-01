@@ -51,15 +51,19 @@ void PendulumCtrlAtt::ctrl_thread() {
 			_reset_pose = false;
 			_pendulum_x_pid.reset();
 			_pendulum_y_pid.reset();
+			_vehicle_z_pid.reset();
 
 			_pendulum_x_pid.setReference(_pose.position.x);
 			_pendulum_y_pid.setReference(_pose.position.y);
+			_vehicle_z_pid.setReference(_vehicle_pose_local.position.z);
 		} else {
 			_pendulum_x_pid.setFeedback(_pose.position.x);
 			_pendulum_y_pid.setFeedback(_pose.position.y);
+			_vehicle_z_pid.setFeedback(_vehicle_pose_local.position.z);
 
 			_pendulum_output_r = _pendulum_x_pid.getOutput();
 			_pendulum_output_s = _pendulum_y_pid.getOutput();
+			double thrust = _vehicle_z_pid.getOutput();
 
 			double vehicle_vel_acc_x = 0.0;
 			double vehicle_vel_acc_y = 0.0;
@@ -95,15 +99,17 @@ void PendulumCtrlAtt::ctrl_thread() {
 				angle_x, angle_y, a, a/(2*PendulumDynamic::g),
 				vehicle_rate_x, vehicle_rate_y);
 */
+			ROS_INFO("z/thrust:[%f %f]", _vehicle_pose_local.position.z, thrust);
+
 			if (_throttle_pub) {
 				std_msgs::Float64 throttle;
-				throttle.data = 0.49000;//a/(2*PendulumDynamic::g); // 0~1
+				throttle.data = thrust;//a/(2*PendulumDynamic::g); // 0~1
 				_throttle_pub.publish(throttle);
 			}
 
 			if (_attitude_pub) {
 				// transform x = -x y = y z = z
-				auto rpy = mavros::ftf::transform_frame_aircraft_baselink(Eigen::Vector3d(-0.5, 0.0, 0.0));
+				auto rpy = mavros::ftf::transform_frame_aircraft_baselink(Eigen::Vector3d(0.0, 0.0, 0.0));
 
 				geometry_msgs::TwistStamped attitude;
 				attitude.twist.angular.x = rpy[0];

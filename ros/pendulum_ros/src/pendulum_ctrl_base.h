@@ -54,6 +54,7 @@ protected:
 	dynamic_reconfigure::Server<pendulum_ros::PendulumConfig> _cfg_server;
 	CVG_BlockDiagram::PID _pendulum_x_pid;
 	CVG_BlockDiagram::PID _pendulum_y_pid;
+	CVG_BlockDiagram::PID _vehicle_z_pid;
 
 	bool _started;
 	pthread_t _thread;
@@ -71,6 +72,9 @@ protected:
 	static constexpr double DEFAULT_PENDULUM_Y_P = 0.5;
 	static constexpr double DEFAULT_PENDULUM_Y_I = 0.0;
 	static constexpr double DEFAULT_PENDULUM_Y_D = 0.0;
+	static constexpr double DEFAULT_VEHICLE_Z_P = 1.0;
+	static constexpr double DEFAULT_VEHICLE_Z_I = 0.0;
+	static constexpr double DEFAULT_VEHICLE_Z_D = 0.5;
 
 	double _pendulum_l;
 	fmaros_msgs::PendulumPose _pose_local;
