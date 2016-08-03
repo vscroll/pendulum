@@ -16,9 +16,10 @@ PendulumCtrlBase::PendulumCtrlBase()
 	_rate(200),
 	_pendulum_l(DEFAULT_PENDULUM_L),
 	_reset_pose(false) {
-	
+
 	_pendulum_sub = _nh.subscribe("/FMA/Pendulum/Pose", 100, &PendulumCtrlBase::pendulum_pose_callback, this);
 	_vehicle_sub = _nh.subscribe("/FMA/Vehicle/Pose", 100, &PendulumCtrlBase::vehicle_pose_callback, this);
+	_vehicle_state_sub = _nh.subscribe("/mavros/state", 100, &PendulumCtrlBase::vehicle_state_callback, this);
 
 	_arming_client = _nh.serviceClient<mavros_msgs::CommandBool>("/mavros/cmd/arming");
 	_set_mode_client = _nh.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
@@ -168,12 +169,28 @@ void PendulumCtrlBase::set_posctl() {
 }
 
 void PendulumCtrlBase::set_offboard() {
+	ROS_INFO("set offboard");
+	ros::Rate rate(20.0);
+	ros::Publisher local_pos_pub = _nh.advertise<geometry_msgs::PoseStamped>("/mavros/setpoint_position/local", 10);
+	geometry_msgs::PoseStamped pose;
+	pose.pose.position.x = 0;
+	pose.pose.position.y = 0;
+	pose.pose.position.z = 2;
+	for(int i = 20; i > 0; --i) {
+		local_pos_pub.publish(pose);
+		ros::spinOnce();
+		rate.sleep();
+	}
+
+	ROS_INFO("set offboard call");
 	mavros_msgs::SetMode offb_set_mode;
 	offb_set_mode.request.custom_mode = "OFFBOARD";
-	if (_set_mode_client) {
-		if (_set_mode_client.call(offb_set_mode) &&
-				offb_set_mode.response.success){
+	if (_current_state.mode != "OFFBOARD"){
+		if (_set_mode_client.call(offb_set_mode)
+				&& offb_set_mode.response.success){
 			ROS_INFO("Offboard enabled");
+		} else {
+			ROS_INFO("Offboard failed");
 		}
 	}
 }
@@ -195,13 +212,14 @@ void PendulumCtrlBase::set_cmd_sequence() {
 
 	set_offboard();
 }
+
 void PendulumCtrlBase::pendulum_pose_callback(const fmaros_msgs::PendulumPose::ConstPtr& msg) {
-/*
-	_pose_local.header = msg->header;
-	_pose_local.position = msg->position;
-	_pose_local.velocity = msg->velocity;
-	_pose_local.vel_acc = msg->vel_acc;
-*/
+	/*
+	   _pose_local.header = msg->header;
+	   _pose_local.position = msg->position;
+	   _pose_local.velocity = msg->velocity;
+	   _pose_local.vel_acc = msg->vel_acc;
+	 */
 	_pose_local = *msg;
 
 	struct timeval tv;
@@ -209,19 +227,23 @@ void PendulumCtrlBase::pendulum_pose_callback(const fmaros_msgs::PendulumPose::C
 
 	gettimeofday(&tv, &tz);
 
-//	time delay test
-//	printf("seq %d delay %ld us\n", _pose_local.header.seq,
-//		(tv.tv_sec - _pose_local.header.stamp.sec) * 1000000 + tv.tv_usec - _pose_local.header.stamp.nsec);
-/*
-	ROS_INFO("Pendulum Pose: %f %f %f %f %f %f %f %f %f",
-		_pose_local.position.x, _pose_local.position.y, _pose_local.position.z,
-		_pose_local.velocity.x, _pose_local.velocity.y, _pose_local.velocity.z,
-		_pose_local.vel_acc.x, _pose_local.vel_acc.y, _pose_local.vel_acc.z);
-*/
+	//	time delay test
+	//	printf("seq %d delay %ld us\n", _pose_local.header.seq,
+	//		(tv.tv_sec - _pose_local.header.stamp.sec) * 1000000 + tv.tv_usec - _pose_local.header.stamp.nsec);
+	/*
+	   ROS_INFO("Pendulum Pose: %f %f %f %f %f %f %f %f %f",
+	   _pose_local.position.x, _pose_local.position.y, _pose_local.position.z,
+	   _pose_local.velocity.x, _pose_local.velocity.y, _pose_local.velocity.z,
+	   _pose_local.vel_acc.x, _pose_local.vel_acc.y, _pose_local.vel_acc.z);
+	 */
 }
 
 void PendulumCtrlBase::vehicle_pose_callback(const fmaros_msgs::VehiclePose::ConstPtr& msg) {
 
 	_vehicle_pose_local = *msg;
+}
+
+void PendulumCtrlBase::vehicle_state_callback(const mavros_msgs::State::ConstPtr& msg) {
+	_current_state = *msg;
 }
 

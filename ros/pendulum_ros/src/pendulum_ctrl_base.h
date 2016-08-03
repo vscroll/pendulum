@@ -8,6 +8,7 @@
 #include <fmaros_msgs/PendulumPose.h>
 #include <fmaros_msgs/VehiclePose.h>
 #include <frame_tf.h>
+#include <mavros_msgs/State.h>
 
 #include "PID.h"
 
@@ -46,6 +47,7 @@ private:
 
 	void pendulum_pose_callback(const fmaros_msgs::PendulumPose::ConstPtr& msg);
 	void vehicle_pose_callback(const fmaros_msgs::VehiclePose::ConstPtr& msg);
+	void vehicle_state_callback(const mavros_msgs::State::ConstPtr& msg);
 
 protected:
 	ros::Rate _rate;
@@ -61,6 +63,7 @@ protected:
 
 	ros::Subscriber _pendulum_sub;
 	ros::Subscriber _vehicle_sub;
+	ros::Subscriber _vehicle_state_sub;
 
 	ros::ServiceClient _arming_client;
 	ros::ServiceClient _set_mode_client;
@@ -80,6 +83,8 @@ protected:
 	fmaros_msgs::PendulumPose _pose_local;
 	fmaros_msgs::PendulumPose _pose;
 	fmaros_msgs::VehiclePose _vehicle_pose_local;
+
+	mavros_msgs::State _current_state;
 
 	double _pendulum_output_r;
 	double _pendulum_output_s;
