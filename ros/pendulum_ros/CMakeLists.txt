@@ -147,24 +147,44 @@ include_directories(
 
 ## Declare a C++ executable
 # add_executable(pendulum_ros_node src/pendulum_ros_node.cpp)
-add_executable(pendulum_ros_node 
-	lib/ftf_quaternion_utils.cpp
-	lib/ftf_frame_conversions.cpp
-	src/pendulum_ros.cpp
-	src/pendulum_ctrl_base.cpp
-	src/pendulum_ctrl_att.cpp
-	src/pendulum_ctrl_pos.cpp
-	src/PID.cpp)
+add_executable(pendulum_att_control 
+	src/frame_tf/ftf_quaternion_utils.cpp
+	src/frame_tf/ftf_frame_conversions.cpp
+	src/pid/PID.cpp
+	src/pendulum_common/pendulum_ctrl_base.cpp
+	src/pendulum_att_control/pendulum_ctrl_att.cpp
+	src/pendulum_att_control/pendulum_ros.cpp
+	)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(pendulum_ros_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(pendulum_ros_node
+target_link_libraries(pendulum_att_control
    ${catkin_LIBRARIES}
 )
 
+add_executable(pendulum_pos_control
+	src/frame_tf/ftf_quaternion_utils.cpp
+	src/frame_tf/ftf_frame_conversions.cpp
+	src/pid/PID.cpp
+	src/pendulum_common/pendulum_ctrl_base.cpp
+	src/pendulum_pos_control/pendulum_ctrl_pos.cpp
+	src/pendulum_pos_control/pendulum_ros.cpp
+	)
+
+target_link_libraries(pendulum_pos_control
+   ${catkin_LIBRARIES}
+)
+
+add_executable(pendulum_state 
+	src/pendulum_state/pendulum_state.cpp
+	)
+
+target_link_libraries(pendulum_state
+   ${catkin_LIBRARIES}
+)
 #############
 ## Install ##
 #############

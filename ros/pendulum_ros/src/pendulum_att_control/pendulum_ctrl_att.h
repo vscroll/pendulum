@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 
-#include "pendulum_ctrl_base.h"
+#include "../pendulum_common/pendulum_ctrl_base.h"
 
 class PendulumCtrlAtt: public PendulumCtrlBase {
 

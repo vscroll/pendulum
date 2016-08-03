@@ -1,5 +1,6 @@
 #include "pendulum_ctrl_pos.h"
-#include "pendulum_dynamic.h"
+#include "../pendulum_common/pendulum_dynamic.h"
+#include "../frame_tf/frame_tf.h"
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>

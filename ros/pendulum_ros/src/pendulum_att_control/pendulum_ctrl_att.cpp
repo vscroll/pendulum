@@ -1,5 +1,5 @@
 #include "pendulum_ctrl_att.h"
-#include "pendulum_dynamic.h"
+#include "../pendulum_common/pendulum_dynamic.h"
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
@@ -106,18 +106,19 @@ void PendulumCtrlAtt::ctrl_thread() {
 				throttle.data = thrust;//a/(2*PendulumDynamic::g); // 0~1
 				_throttle_pub.publish(throttle);
 			}
-
+/*
 			if (_attitude_pub) {
 				// transform x = -x y = y z = z
 				auto rpy = mavros::ftf::transform_frame_aircraft_baselink(Eigen::Vector3d(0.0, 0.0, 0.0));
 
 				geometry_msgs::TwistStamped attitude;
-				attitude.twist.angular.x = rpy[0];
-				attitude.twist.angular.y = rpy[1];
-				attitude.twist.angular.z = rpy[2];
+				attitude.twist.angular.x = 0;//rpy[0];
+				attitude.twist.angular.y = 0;//rpy[1];
+				attitude.twist.angular.z = 0;//rpy[2];
 
 				_attitude_pub.publish(attitude);
 			}
+*/
 		}
 
 		_rate.sleep();

@@ -7,10 +7,9 @@
 #include <pendulum_ros/PendulumConfig.h>
 #include <fmaros_msgs/PendulumPose.h>
 #include <fmaros_msgs/VehiclePose.h>
-#include <frame_tf.h>
 #include <mavros_msgs/State.h>
 
-#include "PID.h"
+#include "../pid/PID.h"
 
 class PendulumCtrlBase {
 
