@@ -8,5 +8,8 @@ list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 add_library(lighthouse SHARED src/lighthouse_sim.cpp)
 target_link_libraries(lighthouse ${GAZEBO_LIBRARIES})
 
-add_library(contact SHARED src/ContactPlugin.cc)
-target_link_libraries(contact ${GAZEBO_LIBRARIES})
+add_library(ray SHARED src/RayPlugin.cc)
+target_link_libraries(ray ${GAZEBO_LIBRARIES})
+
+add_library(scan SHARED src/TargetScan.cpp)
+target_link_libraries(scan ${GAZEBO_LIBRARIES})
