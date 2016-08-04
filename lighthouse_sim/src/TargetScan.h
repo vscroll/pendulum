@@ -21,7 +21,6 @@ namespace gazebo
     physics::WorldPtr world;
     pthread_t thread;
     static void* Scan(void *arg);
-
   };
 }
 #endif

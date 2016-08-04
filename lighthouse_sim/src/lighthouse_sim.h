@@ -9,16 +9,17 @@
 
 namespace gazebo
 {
-  class LightHouse : public ModelPlugin {
+  class LightHouse : public WorldPlugin {
     public:
     LightHouse();
     ~LightHouse();
 
     protected:
-    void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
+    void Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf);
 
     private:
-
+    event::ConnectionPtr Scan;
+    void Update();
   };
 }
 #endif

@@ -2,6 +2,7 @@
 <sdf version="1.5">
   <world name="default">
     <plugin name="scan" filename="libscan.so"/>
+    <plugin name="lighthouse" filename="liblighthouse.so"/>
     <!-- A global light source -->
     <include>
       <uri>model://sun</uri>

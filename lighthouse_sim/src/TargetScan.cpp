@@ -1,5 +1,5 @@
 #include "TargetScan.h"
-
+#include "ScanEvent.h"
 
 namespace gazebo
 {
@@ -20,7 +20,8 @@ void TargetScan::Load(physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/) {
 
 void* TargetScan::Scan(void *arg) {
   while (1) {
-    usleep(100);
+    usleep(1000000);
+    scan_event();
   }
 
   return NULL;
