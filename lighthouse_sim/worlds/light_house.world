@@ -16,7 +16,6 @@
       <link name="base">
         <!-- Offset the base by half the lenght of the cylinder -->
         <pose>0 0 0.029335 0 0 0</pose>
-        <collision name="base_collision">
         <inertial>
           <mass>1.2</mass>
           <inertia>
@@ -28,6 +27,7 @@
             <iyz>0</iyz>
           </inertia>
         </inertial>
+        <collision name="base_collision">
           <geometry>
             <cylinder>
               <!-- Radius and length provided by Velodyne -->
