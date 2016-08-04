@@ -18,7 +18,7 @@ void ContactPlugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 {
   // Get the parent sensor.
   this->parentSensor =
-    std::dynamic_pointer_cast<sensors::ContactSensor>(_sensor);
+    boost::dynamic_pointer_cast<sensors::ContactSensor>(_sensor);
 
   // Make sure the parent sensor is valid.
   if (!this->parentSensor)
@@ -40,7 +40,7 @@ void ContactPlugin::OnUpdate()
 {
   // Get all the contacts.
   msgs::Contacts contacts;
-  contacts = this->parentSensor->Contacts();
+  contacts = this->parentSensor->GetContacts();
   for (unsigned int i = 0; i < contacts.contact_size(); ++i)
   {
     std::cout << "Collision between[" << contacts.contact(i).collision1()

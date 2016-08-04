@@ -16,17 +16,9 @@ namespace gazebo
 
     protected:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-    void CollisionUpdate(const common::UpdateInfo&);
 
     private:
-    std::string namespace_;
-    std::string link_name_;
-    // Pointer to the model
-    physics::ModelPtr model_;
-    // Pointer to the link
-    physics::LinkPtr link_;
-    // Point to the collision detection event connection
-    event::ConnectionPtr physicsUpdate_;
+
   };
 }
 #endif
