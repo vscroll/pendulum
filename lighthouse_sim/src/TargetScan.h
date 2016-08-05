@@ -14,13 +14,15 @@ namespace gazebo
     TargetScan();
     ~TargetScan();
 
+    void Scan();
+
     protected:
     void Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf);
 
     private:
     physics::WorldPtr world;
     pthread_t thread;
-    static void* Scan(void *arg);
+    static void* thread_run(void *arg);
   };
 }
 #endif
