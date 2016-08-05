@@ -34,12 +34,9 @@
     </include>
 
     <!-- A velodyne  -->
-    <model name="velodyne">
-      <include>
-        <uri>model://velodyne</uri>
-        <pose>5 0 5 0 0 0</pose>
-      </include>
-    </model>
+    <include>
+      <uri>model://velodyne</uri>
+    </include>
 
     <!-- A tracking ball -->
     <model name="ball0">

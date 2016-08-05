@@ -1,47 +1,11 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
   <model name="velodyne_hdl-32">
-      <!-- Give the base link a unique name -->
-      <link name="base">
-        <!-- Offset the base by half the lenght of the cylinder -->
-        <pose>0 0 0.029335 0 0 0</pose>
-        <inertial>
-          <mass>1.2</mass>
-          <inertia>
-            <ixx>0.001087473</ixx>
-            <iyy>0.001087473</iyy>
-            <izz>0.001092437</izz>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyz>0</iyz>
-          </inertia>
-        </inertial>
-        <collision name="base_collision">
-          <geometry>
-            <cylinder>
-              <!-- Radius and length provided by Velodyne -->
-              <radius>.04267</radius>
-              <length>.05867</length>
-            </cylinder>
-          </geometry>
-        </collision>
-
-        <!-- The visual is mostly a copy of the collision -->
-        <visual name="base_visual">
-          <geometry>
-            <cylinder>
-              <radius>.04267</radius>
-              <length>.05867</length>
-            </cylinder>
-          </geometry>
-        </visual>
-      </link>
-
+      <pose>0 0 0 0 0 0</pose>
       <!-- Give the base link a unique name -->
       <link name="top">
         <!-- Vertically offset the top cylinder by the length of the bottom
             cylinder and half the length of this cylinder. -->
-        <pose>0 0 0.095455 0 0 0</pose>
         <inertial>
           <mass>0.1</mass>
           <inertia>
@@ -55,21 +19,19 @@
         </inertial>
         <collision name="top_collision">
           <geometry>
-            <cylinder>
+            <sphere>
               <!-- Radius and length provided by Velodyne -->
               <radius>0.04267</radius>
-              <length>0.07357</length>
-            </cylinder>
+            </sphere>
           </geometry>
         </collision>
 
         <!-- The visual is mostly a copy of the collision -->
         <visual name="top_visual">
           <geometry>
-            <cylinder>
+            <sphere>
               <radius>0.04267</radius>
-              <length>0.07357</length>
-            </cylinder>
+            </sphere>
           </geometry>
         </visual>
         <!-- Add a ray sensor, and give it a name -->
@@ -77,7 +39,7 @@
           <!-- Position the ray sensor based on the specification. Also rotate
                it by 90 degrees around the X-axis so that the <horizontal> rays
                become vertical -->
-          <pose>0 0 0.02 1.5707 0 0</pose>
+          <pose>0 0 0 1.5707 0 0</pose>
           <!-- Enable visualization to see the rays in the GUI -->
           <visualize>true</visualize>
           <!-- Set the update rate of the sensor -->
@@ -113,25 +75,5 @@
           </ray>
         </sensor>
       </link>
-      <!-- Each joint must have a unique name -->
-      <joint type="revolute" name="joint">
-        <!-- Position the joint at the bottom of the top link -->
-        <pose>0 0 -0.036785 0 0 0</pose>
-        <!-- Use the base link as the parent of the joint -->
-        <parent>base</parent>
-        <!-- Use the top link as the child of the joint -->
-        <child>top</child>
-        <!-- The axis defines the joint's degree of freedom -->
-        <axis>
-          <!-- Revolve around the z-axis -->
-          <xyz>0 0 1</xyz>
-          <!-- Limit refers to the range of motion of the joint -->
-          <limit>
-            <!-- Use a very large number to indicate a continuous revolution -->
-            <lower>-10000000000000000</lower>
-            <upper>10000000000000000</upper>
-          </limit>
-        </axis>
-      </joint>
     </model>
 </sdf>

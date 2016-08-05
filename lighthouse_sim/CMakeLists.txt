@@ -13,3 +13,6 @@ target_link_libraries(ray ${GAZEBO_LIBRARIES})
 
 add_library(scan SHARED src/TargetScan.cpp)
 target_link_libraries(scan ${GAZEBO_LIBRARIES})
+
+add_library(BlinkVisualPlugin SHARED src/BlinkVisualPlugin.cc)
+target_link_libraries(BlinkVisualPlugin ${GAZEBO_LIBRARIES})
