@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<sdf version="1.5">
+<model name="ball">
+  <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

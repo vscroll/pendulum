@@ -25,7 +25,7 @@ void TargetScan::Scan() {
     double time = current_time.Double();
     printf("RayPlugin::OnNewLaserScans time %lf\n", time);
 
-    usleep(1000000);
+    usleep(100);
     scan_event();
   }
 }
