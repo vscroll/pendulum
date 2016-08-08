@@ -54,6 +54,10 @@ namespace gazebo
     /// \brief The connection tied to RayPlugin::OnNewLaserScans()
     private: event::ConnectionPtr newLaserScansConnection;
 
+    private: event::ConnectionPtr updateConnection;
+
+    private: void OnUpdate(const common::UpdateInfo& info);
+
     private: pthread_t thread;
 
     private: void* thread_run(void* arg);

@@ -20,8 +20,10 @@ namespace gazebo
     void Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf);
 
     private:
+    event::ConnectionPtr sync;
     physics::WorldPtr world;
     pthread_t thread;
+    void SyncUpdate();
     static void* thread_run(void *arg);
   };
 }

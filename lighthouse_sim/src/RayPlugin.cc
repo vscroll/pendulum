@@ -21,6 +21,7 @@
 
 #include "gazebo/physics/physics.hh"
 #include "RayPlugin.hh"
+#include "SyncEvent.h"
 
 using namespace gazebo;
 
@@ -41,6 +42,8 @@ RayPlugin::~RayPlugin()
 
   this->parentSensor.reset();
   this->world.reset();
+
+  event::Events::DisconnectWorldUpdateBegin(updateConnection);
 }
 
 /////////////////////////////////////////////////
@@ -55,17 +58,24 @@ void RayPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr /*_sdf*/)
 
   this->world = physics::get_world(this->parentSensor->GetWorldName());
 
-//  this->newLaserScansConnection =
-//    this->parentSensor->GetLaserShape()->ConnectNewLaserScans(
-//      boost::bind(&RayPlugin::OnNewLaserScans, this));
+  this->newLaserScansConnection =
+    this->parentSensor->GetLaserShape()->ConnectNewLaserScans(
+      boost::bind(&RayPlugin::OnNewLaserScans, this));
+
+  this->updateConnection = event::Events::ConnectWorldUpdateBegin(
+    boost::bind(&RayPlugin::OnUpdate, this, _1));
 }
 
 /////////////////////////////////////////////////
 void RayPlugin::OnNewLaserScans()
 {
-  double retro = this->parentSensor->GetRetro(1);
+  /* overload with useful callback here */
+}
+
+void RayPlugin::OnUpdate(const common::UpdateInfo& info)
+{
   common::Time current_time = this->world->GetSimTime();
   double time = current_time.Double();
-  printf("RayPlugin::OnNewLaserScans time %lf\n", time);
-  /* overload with useful callback here */
+  sync_event();
+  printf("[RayPlugin] Sync time %lf\n", time);
 }
