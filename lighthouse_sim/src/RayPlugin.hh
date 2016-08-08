@@ -30,7 +30,7 @@
 namespace gazebo
 {
   /// \brief A Ray Sensor Plugin
-  class GAZEBO_VISIBLE RayPlugin : public SensorPlugin
+  class RayPlugin : public ModelPlugin
   {
     /// \brief Constructor
     public: RayPlugin();
@@ -38,21 +38,14 @@ namespace gazebo
     /// \brief Destructor
     public: virtual ~RayPlugin();
 
-    /// \brief Update callback
-    public: virtual void OnNewLaserScans();
-
     /// \brief Load the plugin
     /// \param take in SDF root element
-    public: void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
+    private: void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
-    /// \brief Pointer to parent
-    protected: physics::WorldPtr world;
+    /// \brief Pointer to world
+    private: physics::WorldPtr world;
 
-    /// \brief The parent sensor
-    private: sensors::RaySensorPtr parentSensor;
-
-    /// \brief The connection tied to RayPlugin::OnNewLaserScans()
-    private: event::ConnectionPtr newLaserScansConnection;
+    private: physics::ModelPtr model;
 
     private: event::ConnectionPtr updateConnection;
 

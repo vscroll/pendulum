@@ -73,8 +73,8 @@
               <resolution>0.02</resolution>
             </range>
           </ray>
-          <plugin name="ray_plugin" filename="libray.so"/>
         </sensor>
       </link>
+      <plugin name="RayPlugin" filename="libRayPlugin.so"/>
     </model>
 </sdf>

@@ -26,7 +26,7 @@
 using namespace gazebo;
 
 // Register this plugin with the simulator
-GZ_REGISTER_SENSOR_PLUGIN(RayPlugin)
+GZ_REGISTER_MODEL_PLUGIN(RayPlugin)
 
 /////////////////////////////////////////////////
 RayPlugin::RayPlugin()
@@ -36,40 +36,16 @@ RayPlugin::RayPlugin()
 /////////////////////////////////////////////////
 RayPlugin::~RayPlugin()
 {
-  this->parentSensor->GetLaserShape()->DisconnectNewLaserScans(
-      this->newLaserScansConnection);
-  this->newLaserScansConnection.reset();
-
-  this->parentSensor.reset();
-  this->world.reset();
-
   event::Events::DisconnectWorldUpdateBegin(updateConnection);
 }
 
-/////////////////////////////////////////////////
-void RayPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr /*_sdf*/)
+void RayPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr /*_sdf*/)
 {
-  // Get then name of the parent sensor
-  this->parentSensor =
-    boost::dynamic_pointer_cast<sensors::RaySensor>(_parent);
-
-  if (!this->parentSensor)
-    gzthrow("RayPlugin requires a Ray Sensor as its parent");
-
-  this->world = physics::get_world(this->parentSensor->GetWorldName());
-
-  this->newLaserScansConnection =
-    this->parentSensor->GetLaserShape()->ConnectNewLaserScans(
-      boost::bind(&RayPlugin::OnNewLaserScans, this));
+  this->model = _model;
+  this->world = this->model->GetWorld();
 
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
     boost::bind(&RayPlugin::OnUpdate, this, _1));
-}
-
-/////////////////////////////////////////////////
-void RayPlugin::OnNewLaserScans()
-{
-  /* overload with useful callback here */
 }
 
 void RayPlugin::OnUpdate(const common::UpdateInfo& info)
