@@ -25,6 +25,8 @@ void PendulumCtrlAtt::ctrl_thread() {
 			continue;
 		}
 
+//cause delay
+#if 0
 		static bool data_warning_once = false;
 		if (_pose.header.seq == _pose_local.header.seq) {
 			if (!data_warning_once) {
@@ -40,12 +42,12 @@ void PendulumCtrlAtt::ctrl_thread() {
 			data_warning_once = false;
 		}
 
+#endif
 		_pose = _pose_local;
 		if (_pose.header.seq <= 0) {
 			_rate.sleep();
 			continue;
 		}
-
 		if (_reset_pose) {
 			ROS_INFO("reset pose");
 			_reset_pose = false;
@@ -55,7 +57,11 @@ void PendulumCtrlAtt::ctrl_thread() {
 
 			_pendulum_x_pid.setReference(_pose.position.x);
 			_pendulum_y_pid.setReference(_pose.position.y);
+			 ROS_INFO("pendulum position x y: %f %f", _pose.position.x, _pose.position.y);
+
 			_vehicle_z_pid.setReference(_vehicle_pose_local.position.z);
+			_vehicle_z_pid.enableMaxOutput(true, 0, 1);
+			 ROS_INFO("vehicle position z: %f", _vehicle_pose_local.position.z);
 		} else {
 			_pendulum_x_pid.setFeedback(_pose.position.x);
 			_pendulum_y_pid.setFeedback(_pose.position.y);
@@ -65,6 +71,7 @@ void PendulumCtrlAtt::ctrl_thread() {
 			_pendulum_output_s = _pendulum_y_pid.getOutput();
 			double thrust = _vehicle_z_pid.getOutput();
 
+#if 0
 			double vehicle_vel_acc_x = 0.0;
 			double vehicle_vel_acc_y = 0.0;
 			PendulumDynamic::formula_12(_pendulum_l,
@@ -89,6 +96,7 @@ void PendulumCtrlAtt::ctrl_thread() {
 									angle_x, angle_y,
 									&vehicle_rate_x, &vehicle_rate_y);
 			//ROS_INFO("formula 7:%f %f", vehicle_rate_x, vehicle_rate_y);
+#endif
 
 /*
 			ROS_INFO("result:%d    %f %f %f %f    %f %f %f %f    %f %f    %f %f %f %f    %f %f",

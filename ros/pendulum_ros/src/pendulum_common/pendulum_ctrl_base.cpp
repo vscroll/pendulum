@@ -81,8 +81,8 @@ void PendulumCtrlBase::cfg_pid_callback(pendulum_ros::PendulumConfig &config, ui
 		set_posctl();
 	} else if (config.vehicle_cmd == VEHICLE_CMD_OFFBOARD) {
 		set_offboard();
-	} else if (config.vehicle_cmd == VEHICLE_CMD_SEQUENCE) {
-		set_cmd_sequence();
+	} else if (config.vehicle_cmd == VEHICLE_CMD_START_OFFBOARD) {
+		set_start_offboard();
 	} else {
 	}
 }
@@ -149,10 +149,12 @@ void PendulumCtrlBase::disarmed() {
 void PendulumCtrlBase::takeoff() {
 	mavros_msgs::SetMode offb_set_mode;
 	offb_set_mode.request.custom_mode = "AUTO.TAKEOFF";
-	if (_set_mode_client) {
+	if (_current_state.mode != "AUTO.TAKEOFF"){
 		if (_set_mode_client.call(offb_set_mode) &&
 				offb_set_mode.response.success){
 			ROS_INFO("takeoff enabled");
+		} else {
+			ROS_INFO("takeoff failed");
 		}
 	}
 }
@@ -160,16 +162,21 @@ void PendulumCtrlBase::takeoff() {
 void PendulumCtrlBase::set_posctl() {
 	mavros_msgs::SetMode offb_set_mode;
 	offb_set_mode.request.custom_mode = "POSCTL";
-	if (_set_mode_client) {
+	if (_current_state.mode != "POSCTL"){
 		if (_set_mode_client.call(offb_set_mode) &&
 				offb_set_mode.response.success){
 			ROS_INFO("posctl enabled");
+		} else {
+			ROS_INFO("posctl failed");
 		}
 	}
 }
 
 void PendulumCtrlBase::set_offboard() {
 	ROS_INFO("set offboard");
+
+//cause delay
+#if 0
 	ros::Rate rate(20.0);
 	ros::Publisher local_pos_pub = _nh.advertise<geometry_msgs::PoseStamped>("/mavros/setpoint_position/local", 10);
 	geometry_msgs::PoseStamped pose;
@@ -181,6 +188,7 @@ void PendulumCtrlBase::set_offboard() {
 		ros::spinOnce();
 		rate.sleep();
 	}
+#endif
 
 	ROS_INFO("set offboard call");
 	mavros_msgs::SetMode offb_set_mode;
@@ -195,15 +203,20 @@ void PendulumCtrlBase::set_offboard() {
 	}
 }
 
-void PendulumCtrlBase::set_cmd_sequence() {
-	ros::Rate rate(1);
-	armed();
-	rate.sleep();
-	takeoff();
-	rate.sleep();
-	rate.sleep();
-	rate.sleep();
-	rate.sleep();
+void PendulumCtrlBase::set_start_offboard() {
+
+	pthread_create(&_thread, NULL, &PendulumCtrlBase::thread_start_offboard, this);
+}
+
+
+void* PendulumCtrlBase::thread_start_offboard(void* argument) {
+	((PendulumCtrlBase*)argument)->start_offboard_thread();
+	return NULL;
+}
+
+void PendulumCtrlBase::start_offboard_thread() {
+
+	ros::Rate rate(100);
 
 	_reset_pose = true;
 	reset_pose();
