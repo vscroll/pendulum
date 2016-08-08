@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 	vehicle_pose.velocity.z =vehiclepose.vz();
 	vehicle_pose.vel_acc.x =vehiclepose.acc_x();
 	vehicle_pose.vel_acc.y =vehiclepose.acc_y();
-	vehicle_pose.vel_acc.x =vehiclepose.acc_z();
+	vehicle_pose.vel_acc.z =vehiclepose.acc_z();
 	vehicle_pose.angle.x =vehiclepose.roll();
 	vehicle_pose.angle.y =vehiclepose.pitch();
 	vehicle_pose.angle.z =vehiclepose.yaw();
