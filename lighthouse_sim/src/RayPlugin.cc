@@ -22,6 +22,7 @@
 #include "gazebo/physics/physics.hh"
 #include "RayPlugin.hh"
 #include "SyncEvent.h"
+#include "Common.h"
 
 using namespace gazebo;
 
@@ -73,6 +74,7 @@ void RayPlugin::OnUpdate(const common::UpdateInfo& info)
       math::Pose A(math::Vector3(0, 0, 0), math::Quaternion(1.57080, 0, 0.785398));
       //link->SetRelativePose(A);
       link->SetWorldPose(A);
+      //SCAN_ANGULAR_VEL^2 = 2 * 133.287^2
       link->SetAngularVel(math::Vector3(133.287, -133.287, 0));
       fs = HFrame;
       printf("[RayPlugin] VFrame\n");
@@ -80,7 +82,7 @@ void RayPlugin::OnUpdate(const common::UpdateInfo& info)
       math::Pose A(math::Vector3(0, 0, 0), math::Quaternion(0, 0, 0));
       //link->SetRelativePose(A);
       link->SetWorldPose(A);
-      link->SetAngularVel(math::Vector3(0, 0, 188.496));
+      link->SetAngularVel(math::Vector3(0, 0, SCAN_ANGULAR_VEL));
       fs = VFrame;
       printf("[RayPlugin] HFrame\n");
     }

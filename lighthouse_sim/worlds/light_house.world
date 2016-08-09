@@ -21,8 +21,6 @@
       </ode>
     </physics>
 
-    <plugin name="scan" filename="libscan.so"/>
-    <plugin name="lighthouse" filename="liblighthouse.so"/>
     <!-- A global light source -->
     <include>
       <uri>model://sun</uri>
@@ -39,31 +37,32 @@
     </include>
 
     <!-- A tracking ball -->
-    <model name="ball0">
-      <include>
-        <static>true</static>
-        <uri>model://ball</uri>
-        <pose>1 1 1 0 0 0</pose>
-      </include>
-    </model>
+    <include>
+      <uri>model://ball</uri>
+      <name>ballA</name>
+      <pose>1 1 1 0 0 0</pose>
+    </include>
 
     <!-- A tracking ball -->
-    <model name="ball1">
-      <include>
-        <static>true</static>
-        <uri>model://ball</uri>
-        <pose>1 1 2 0 0 0</pose>
-      </include>
-    </model>
+    <include>
+      <uri>model://ball</uri>
+      <name>ballB</name>
+      <pose>1 1 2 0 0 0</pose>
+    </include>
 
     <!-- A tracking ball -->
-    <model name="ball2">
-      <include>
-        <static>true</static>
-        <uri>model://ball</uri>
-        <pose>1 2 2 0 0 0</pose>
-      </include>
-    </model>
+    <include>
+      <uri>model://ball</uri>
+      <name>ballC</name>
+      <pose>1 2 2 0 0 0</pose>
+    </include>
 
+    <plugin name="scan" filename="libscan.so">
+      <modelNameA>ballA</modelNameA>
+      <modelNameB>ballB</modelNameB>
+      <modelNameC>ballC</modelNameC>
+      <rayModelName>velodyne_hdl-32</rayModelName>
+    </plugin>
+    <plugin name="lighthouse" filename="liblighthouse.so"/>
   </world>
 </sdf>
