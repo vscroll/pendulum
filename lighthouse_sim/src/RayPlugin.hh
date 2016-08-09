@@ -40,20 +40,32 @@ namespace gazebo
 
     /// \brief Load the plugin
     /// \param take in SDF root element
-    private: void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-
+    private:
+    void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
     /// \brief Pointer to world
-    private: physics::WorldPtr world;
+    std::string link_name;
+    physics::WorldPtr world;
+    physics::ModelPtr model;
+    physics::LinkPtr link;
 
-    private: physics::ModelPtr model;
+    enum FrameStatus
+    {
+      // Vertecal Frame
+      VFrame,
+      // Horizontal Frame
+      HFrame
+    };
 
-    private: event::ConnectionPtr updateConnection;
+    FrameStatus fs;
+    double last_frame_t;
 
-    private: void OnUpdate(const common::UpdateInfo& info);
+    event::ConnectionPtr updateConnection;
 
-    private: pthread_t thread;
+    void OnUpdate(const common::UpdateInfo& info);
 
-    private: void* thread_run(void* arg);
+    pthread_t thread;
+
+    void* thread_run(void* arg);
   };
 }
 #endif

@@ -26,7 +26,7 @@ void TargetScan::SyncUpdate() {
   common::Time current_time = world->GetSimTime();
   double time = current_time.Double();
 
-  printf("[TargetScan] Sync time %lf\n", time);
+  //printf("[TargetScan] Sync time %lf\n", time);
 }
 
 void TargetScan::Scan() {
@@ -36,7 +36,7 @@ void TargetScan::Scan() {
     double time = current_time.Double();
 
     scan_event();
-    printf("[TargetScan] Scan time %lf\n", time);
+    //printf("[TargetScan] Scan time %lf\n", time);
 
     usleep(100);
   }

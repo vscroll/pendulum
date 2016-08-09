@@ -3,7 +3,7 @@
   <world name="default">
     <physics type="ode">
       <gravity>0 0 0</gravity>
-      <max_step_size>0.000001</max_step_size>
+      <max_step_size>0.0000001</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000000</real_time_update_rate>
       <ode>

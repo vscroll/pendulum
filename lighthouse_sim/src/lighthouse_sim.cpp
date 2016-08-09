@@ -18,7 +18,7 @@ void LightHouse::Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf) {
 }
 
 void LightHouse::Update() {
-  printf("LightHouse Scan\n");
+  //printf("LightHouse Scan\n");
 }
 
   GZ_REGISTER_WORLD_PLUGIN(LightHouse);
