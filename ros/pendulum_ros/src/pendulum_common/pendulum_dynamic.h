@@ -283,6 +283,51 @@ public:
 
 		return isnan(*vehicle_vel_acc_x) || isnan(*vehicle_vel_acc_y);
 	}
+
+	/*
+	formula 4, 5, 12:
+
+	*/
+	static bool formula_4_5_12(const double pendulum_l,
+						const double pendulum_r,
+						const double pendulum_s,
+						const geometry_msgs::Vector3& pendulum_vel,
+						const geometry_msgs::Vector3& pendulum_vel_acc,
+						double* vehicle_angular_x,
+						double* vehicle_angular_y) {
+
+		double l = sqrt(pow(pendulum_l, 2) - pow(pendulum_r, 2) - pow(pendulum_s, 2));
+		double z_acc = 0;
+
+		double l_2 = pow(l, 2);
+		double L_2 = pow(pendulum_l, 2);
+
+		double r = pendulum_r;
+		double r_2 = pow(r, 2);
+		double r_3 = pow(r, 3);
+		double r_vel = pendulum_vel.x;
+		double r_vel_2 = pow(pendulum_vel.x, 2);
+		double r_acc = pendulum_vel_acc.x;
+
+		double s = pendulum_s;
+		double s_2 = pow(s, 2);
+		double s_3 = pow(s, 3);
+		double s_vel = pendulum_vel.y;
+		double s_vel_2 = pow(s_vel, 2);
+		double s_acc = pendulum_vel_acc.y;
+
+		*vehicle_angular_y =
+			atan(((3*r*l*(g+z_acc) + 4*(r_3*(s_vel_2 + s*s_acc) - 2*r_2*s*r_vel*s_vel +
+			r*(-L_2*s*s_acc + s_3*s_acc + s_2*r_vel_2 - L_2*r_vel_2 - L_2*s_vel_2))/l_2 -
+			4*(L_2 - s_2)*r_acc)/(3*l_2))/g);
+
+		*vehicle_angular_x =
+			atan(((3*s*l*(g+z_acc) + 4*(s_3*(r_vel_2 + r*r_acc) - 2*s_2*r*s_vel*r_vel +
+			s*(-L_2*r*r_acc + r_3*r_acc + r_2*s_vel_2 - L_2*s_vel_2 - L_2*r_vel_2))/l_2 -
+			4*(L_2 - r_2)*s_acc)/(3*l_2))*(-cos(*vehicle_angular_y ))/g);
+
+		return isnan(*vehicle_angular_x) || isnan(*vehicle_angular_y);
+	}
 };
 
 #endif

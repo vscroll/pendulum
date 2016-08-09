@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   fmaros_msgs
+  mavros_msgs
 )
 
 find_package(Eigen3)
@@ -118,7 +119,7 @@ include(EnableCXX11)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pendulum_ros
-  CATKIN_DEPENDS dynamic_reconfigure roscpp message_runtime std_msgs geometry_msgs fmaros_msgs
+  CATKIN_DEPENDS dynamic_reconfigure roscpp message_runtime std_msgs geometry_msgs fmaros_msgs mavros_msgs
 #  DEPENDS system_lib
 )
 
