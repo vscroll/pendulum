@@ -46,9 +46,11 @@ namespace gazebo
     double sync_t;
     FrameStatus fs;
     bool angDectedtedList[2][3];
+    double angList[2][3];
     void updateSyncTime();
     void VF_SyncUpdate();
     void HF_SyncUpdate();
+    void coorUpdate();
     static void* thread_run(void *arg);
   };
 }

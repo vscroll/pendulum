@@ -22,6 +22,7 @@ void TargetScan::Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf) {
 
   sync_t = 0.0;
   memset(angDectedtedList, 0, sizeof(angDectedtedList));
+  memset(angList, 0, sizeof(angList));
 
   if(_sdf->HasElement("rayModelName")) {
     rayModelName = _sdf->GetElement("rayModelName")->Get<std::string>();
@@ -79,6 +80,7 @@ void TargetScan::updateSyncTime() {
   double time = current_time.Double();
   sync_t = time;
   memset(angDectedtedList, 0, sizeof(angDectedtedList));
+  memset(angList, 0, sizeof(angList));
   //printf("[TargetScan]Sync time %lf\n", time);
 }
 
@@ -92,6 +94,13 @@ void TargetScan::HF_SyncUpdate() {
   fs = HFrame;
 }
 
+void TargetScan::coorUpdate() {
+  lenAB = math::Vector3(pA.pos[0] - pB.pos[0], pA.pos[1] - pB.pos[1], pA.pos[2] - pB.pos[2]).GetLength();
+  lenBC = math::Vector3(pB.pos[0] - pC.pos[0], pB.pos[1] - pC.pos[1], pB.pos[2] - pC.pos[2]).GetLength();
+  lenAC = math::Vector3(pA.pos[0] - pC.pos[0], pA.pos[1] - pC.pos[1], pA.pos[2] - pC.pos[2]).GetLength();
+  //printf("[TargetScan] AB %lf BC %lf AC %lf\n", lenAB, lenBC, lenAC);
+}
+
 void TargetScan::Scan() {
   while (1) {
     common::Time current_time = this->world->GetSimTime();
@@ -100,12 +109,9 @@ void TargetScan::Scan() {
     math::Pose pA = linkA->GetWorldCoGPose();
     math::Pose pB = linkB->GetWorldCoGPose();
     math::Pose pC = linkC->GetWorldCoGPose();
-
-    lenAB = math::Vector3(pA.pos[0] - pB.pos[0], pA.pos[1] - pB.pos[1], pA.pos[2] - pB.pos[2]).GetLength();
-    lenBC = math::Vector3(pB.pos[0] - pC.pos[0], pB.pos[1] - pC.pos[1], pB.pos[2] - pC.pos[2]).GetLength();
-    lenAC = math::Vector3(pA.pos[0] - pC.pos[0], pA.pos[1] - pC.pos[1], pA.pos[2] - pC.pos[2]).GetLength();
-    //printf("[TargetScan] AB %lf BC %lf AC %lf\n", lenAB, lenBC, lenAC);
     math::Pose pR = rayLink->GetWorldCoGPose();
+    math::Vector3 angR = pR.rot.GetAsEuler();
+    //printf("angR[%f %f %f]\n", angR[0], -angR[1], angR[2]);
 
     if (fs == VFrame) {
       double lAR = math::Vector2d(pA.pos[0], pA.pos[1]).Distance(math::Vector2d(pR.pos[0], pR.pos[1]));
@@ -120,26 +126,23 @@ void TargetScan::Scan() {
       double angC = atan2(pC.pos[2] - pR.pos[2], lCR);
       //printf("angC%f,pC[%f %f %f] pR[%f %f %f]\n", angC, pC.pos[0], pC.pos[1], pC.pos[2], pR.pos[0], pR.pos[1], pR.pos[2]);
 
-      math::Vector3 angR = pR.rot.GetAsEuler();
-      //printf("angR[%f %f %f]\n", angR[0], -angR[1], angR[2]);
-
       if(!angDectedtedList[0][0]  && fabs(angA - fabs(angR[1])) < 0.00005) {
-        double angAA = (time - sync_t) * SCAN_ANGULAR_VEL;
-	printf("angA' angA [%f %f]\n", -angR[1], angAA);
+        angList[0][0] = (time - sync_t) * SCAN_ANGULAR_VEL;
+        printf("angA' angA [%f %f]\n", -angR[1], angList[0][0]);
         angDectedtedList[0][0] = true;
         //publish
       }
 
       if(!angDectedtedList[0][1] && fabs(angB - fabs(angR[1])) < 0.00005) {
-        double angBB = (time - sync_t) * SCAN_ANGULAR_VEL;
-        printf("angB' angB [%f %f]\n", -angR[1], angBB);
+        angList[0][1] = (time - sync_t) * SCAN_ANGULAR_VEL;
+        printf("angB' angB [%f %f]\n", -angR[1], angList[0][1]);
         angDectedtedList[0][1] = true;
         //publish
       }
 
       if(!angDectedtedList[0][2] && fabs(angC - fabs(angR[1])) < 0.00005) {
-        double angCC = (time - sync_t) * SCAN_ANGULAR_VEL;
-        printf("angC' angC [%f %f]\n", -angR[1], angCC);
+        angList[0][2]= (time - sync_t) * SCAN_ANGULAR_VEL;
+        printf("angC' angC [%f %f]\n", -angR[1], angList[0][2]);
         angDectedtedList[0][2] = true;
         //publish
       }
@@ -154,26 +157,23 @@ void TargetScan::Scan() {
       double angC = atan2(pC.pos[1] - pR.pos[1], pC.pos[0] - pR.pos[0]);
       //printf("angC%f,pC[%f %f] pR[%f %f]\n", angC, pC.pos[0], pC.pos[1], pR.pos[0], pR.pos[1]);
 
-      math::Vector3 angR = pR.rot.GetAsEuler();
-      //printf("angR[%f %f %f]\n", angR[0], angR[1], angR[2]);
-
       if(!angDectedtedList[1][0] && fabs(angA - fabs(angR[2])) < 0.00005) {
-        double angAA = (time - sync_t) * SCAN_ANGULAR_VEL;
-	printf("angA' angA [%f %f]\n", angR[2], angAA);
+        angList[1][0]= (time - sync_t) * SCAN_ANGULAR_VEL;
+        printf("angA' angA [%f %f]\n", angR[2], angList[1][0]);
         angDectedtedList[1][0] = true;
         //publish
       }
 
       if(!angDectedtedList[1][1] && fabs(angB - fabs(angR[2])) < 0.00005) {
-        double angBB = (time - sync_t) * SCAN_ANGULAR_VEL;
-        printf("angB' angB [%f %f]\n", angR[2], angBB);
+        angList[1][1]= (time - sync_t) * SCAN_ANGULAR_VEL;
+        printf("angB' angB [%f %f]\n", angR[2], angList[1][1]);
         angDectedtedList[1][1] = true;
         //publish
       }
 
       if(!angDectedtedList[1][2] && fabs(angC - fabs(angR[2])) < 0.00005) {
-        double angCC = (time - sync_t) * SCAN_ANGULAR_VEL;
-        printf("angC' angC [%f %f]\n", angR[2], angCC);
+        angList[1][2] = (time - sync_t) * SCAN_ANGULAR_VEL;
+        printf("angC' angC [%f %f]\n", angR[2], angList[1][2]);
         angDectedtedList[1][2] = true;
         //publish
       }
