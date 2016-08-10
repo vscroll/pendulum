@@ -1,5 +1,4 @@
 #include "TargetScan.h"
-#include "ScanEvent.h"
 #include "SyncEvent.h"
 
 namespace gazebo
@@ -145,8 +144,6 @@ void TargetScan::Scan() {
         //publish
       }
 
-      scan_event();
-
     } else if (fs == HFrame){
       double angA = atan2(pA.pos[1] - pR.pos[1], pA.pos[0] - pR.pos[0]);
       //printf("angA%f,pA[%f %f] pR[%f %f]\n", angA, pA.pos[0], pA.pos[1], pR.pos[0], pR.pos[1]);
@@ -180,7 +177,6 @@ void TargetScan::Scan() {
         angDectedtedList[1][2] = true;
         //publish
       }
-      scan_event();
    }
 
     usleep(100);

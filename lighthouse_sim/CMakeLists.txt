@@ -5,9 +5,6 @@ include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
-add_library(lighthouse SHARED src/lighthouse_sim.cpp)
-target_link_libraries(lighthouse ${GAZEBO_LIBRARIES})
-
 add_library(RayPlugin SHARED src/RayPlugin.cc)
 target_link_libraries(RayPlugin ${GAZEBO_LIBRARIES})
 
