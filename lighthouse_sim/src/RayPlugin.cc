@@ -22,7 +22,6 @@
 #include "gazebo/physics/physics.hh"
 #include "RayPlugin.hh"
 #include "SyncEvent.h"
-#include "Common.h"
 
 using namespace gazebo;
 
@@ -84,26 +83,20 @@ void RayPlugin::OnUpdate(const common::UpdateInfo& info)
   if ((last_frame_t < 0) || (time - last_frame_t > 0.00833333)) {
     if (fs == VFrame) {
       math::Pose A(math::Vector3(0, 0, 0), math::Quaternion(1.57080, 0, 0.785398));
-      //link->SetRelativePose(A);
       link->SetWorldPose(A);
       //SCAN_ANGULAR_VEL^2 = 2 * 133.287^2
       link->SetAngularVel(math::Vector3(133.287, -133.287, 0));
       fs = HFrame;
+      vf_sync();
       printf("[RayPlugin] VFrame\n");
     } else {
       math::Pose A(math::Vector3(0, 0, 0), math::Quaternion(0, 0, 0));
-      //link->SetRelativePose(A);
       link->SetWorldPose(A);
       link->SetAngularVel(math::Vector3(0, 0, SCAN_ANGULAR_VEL));
       fs = VFrame;
+      hf_sync();
       printf("[RayPlugin] HFrame\n");
     }
-    //math::Vector3 v = link->GetWorldAngularVel();
-    //math::Pose p = link->GetWorldCoGPose();
-    //math::Vector3 e = p.rot.GetAsEuler();
-    //printf("[RayPlugin] [ %f %f %f ] [ %f %f %f ]\n",  v[0], v[1], v[2], e[0], e[1], e[2]);
-
-    sync_event();
 
     last_frame_t = time;
   }

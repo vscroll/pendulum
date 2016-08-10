@@ -6,6 +6,7 @@
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>
 #include <stdio.h>
+#include "Common.h"
 
 namespace gazebo
 {
@@ -38,11 +39,16 @@ namespace gazebo
     double lenBC;
     double lenAC;
 
-    event::ConnectionPtr sync;
+    event::ConnectionPtr vf_syncCon;
+    event::ConnectionPtr hf_syncCon;
     physics::WorldPtr world;
     pthread_t thread;
     double sync_t;
-    void SyncUpdate();
+    FrameStatus fs;
+    bool angDectedtedList[2][3];
+    void updateSyncTime();
+    void VF_SyncUpdate();
+    void HF_SyncUpdate();
     static void* thread_run(void *arg);
   };
 }

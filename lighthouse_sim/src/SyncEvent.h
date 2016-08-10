@@ -5,6 +5,7 @@
 
 using namespace gazebo;
 
-event::EventT<void ()> sync_event;
+event::EventT<void ()> vf_sync;
+event::EventT<void ()> hf_sync;
 
 #endif

@@ -26,6 +26,7 @@
 #include "gazebo/sensors/SensorTypes.hh"
 #include "gazebo/sensors/RaySensor.hh"
 #include "gazebo/util/system.hh"
+#include "Common.h"
 
 namespace gazebo
 {
@@ -38,14 +39,6 @@ namespace gazebo
     private:
     void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
     void OnUpdate(const common::UpdateInfo& info);
-
-    enum FrameStatus
-    {
-      // Vertecal Frame
-      VFrame,
-      // Horizontal Frame
-      HFrame
-    };
 
     FrameStatus fs;
     double last_frame_t;
