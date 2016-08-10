@@ -26,27 +26,38 @@
 
 using namespace gazebo;
 
-// Register this plugin with the simulator
-GZ_REGISTER_MODEL_PLUGIN(RayPlugin)
+GZ_REGISTER_SENSOR_PLUGIN(RayPlugin)
 
-/////////////////////////////////////////////////
 RayPlugin::RayPlugin()
 {
 }
 
-/////////////////////////////////////////////////
 RayPlugin::~RayPlugin()
 {
   event::Events::DisconnectWorldUpdateBegin(updateConnection);
 }
 
-void RayPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
+void RayPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 {
-  model = _model;
-  world = model->GetWorld();
-
   fs = VFrame;
   last_frame_t = -1.0;
+
+  // Get then name of the parent sensor
+  this->parentSensor =
+    boost::dynamic_pointer_cast<sensors::RaySensor>(_parent);
+
+  if (!this->parentSensor)
+    gzthrow("RayPlugin requires a Ray Sensor as its parent");
+
+  this->world = physics::get_world(this->parentSensor->GetWorldName());
+
+  if(_sdf->HasElement("modelName")) {
+    model_name = _sdf->GetElement("modelName")->Get<std::string>();
+  } else {
+    gzerr << "[RayPlugin] Please specify a modelName of the Ray\n";
+  }
+
+  this->model = this->world->GetModel(model_name);
 
   if(_sdf->HasElement("linkName")) {
     link_name = _sdf->GetElement("linkName")->Get<std::string>();
@@ -54,14 +65,15 @@ void RayPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     gzerr << "[RayPlugin] Please specify a linkName of the Ray\n";
   }
 
-  link = model->GetLink(link_name);
-  if (link == NULL) {
+  this->link = this->model->GetLink(link_name);
+  if (this->link == NULL) {
     gzthrow("[RayPlguin] Couldn't find specified link \"" << link_name << "\".");
   }
 
-  updateConnection = event::Events::ConnectWorldUpdateBegin(
+  this->updateConnection = event::Events::ConnectWorldUpdateBegin(
     boost::bind(&RayPlugin::OnUpdate, this, _1));
-  printf("load Ray Plugin \n");
+
+  printf("RayPlugin loaded\n");
 }
 
 void RayPlugin::OnUpdate(const common::UpdateInfo& info)

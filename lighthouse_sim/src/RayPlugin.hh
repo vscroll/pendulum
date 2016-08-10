@@ -29,24 +29,15 @@
 
 namespace gazebo
 {
-  /// \brief A Ray Sensor Plugin
-  class RayPlugin : public ModelPlugin
+  class GAZEBO_VISIBLE RayPlugin : public SensorPlugin
   {
-    /// \brief Constructor
-    public: RayPlugin();
+    public:
+    RayPlugin();
+    ~RayPlugin();
 
-    /// \brief Destructor
-    public: virtual ~RayPlugin();
-
-    /// \brief Load the plugin
-    /// \param take in SDF root element
     private:
-    void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-    /// \brief Pointer to world
-    std::string link_name;
-    physics::WorldPtr world;
-    physics::ModelPtr model;
-    physics::LinkPtr link;
+    void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
+    void OnUpdate(const common::UpdateInfo& info);
 
     enum FrameStatus
     {
@@ -59,13 +50,15 @@ namespace gazebo
     FrameStatus fs;
     double last_frame_t;
 
+    std::string model_name;
+    std::string link_name;
+
+    physics::WorldPtr world;
+    physics::ModelPtr model;
+    physics::LinkPtr link;
+
+    sensors::RaySensorPtr parentSensor;
     event::ConnectionPtr updateConnection;
-
-    void OnUpdate(const common::UpdateInfo& info);
-
-    pthread_t thread;
-
-    void* thread_run(void* arg);
   };
 }
 #endif

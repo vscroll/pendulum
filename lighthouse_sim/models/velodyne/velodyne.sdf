@@ -78,6 +78,10 @@
               <resolution>0.02</resolution>
             </range>
           </ray>
+        <plugin name="RayPlugin" filename="libRayPlugin.so">
+          <modelName>velodyne_hdl-32</modelName>
+          <linkName>top</linkName>
+        </plugin>
         </sensor>
       </link>
 
@@ -85,8 +89,5 @@
         <parent>base</parent>
         <child>top</child>
       </joint>
-      <plugin name="RayPlugin" filename="libRayPlugin.so">
-        <linkName>top</linkName>
-      </plugin>
     </model>
 </sdf>
