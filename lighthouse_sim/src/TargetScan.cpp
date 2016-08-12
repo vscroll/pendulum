@@ -95,10 +95,21 @@ void TargetScan::HF_SyncUpdate() {
 }
 
 void TargetScan::coorUpdate() {
-  lenAB = math::Vector3(pA.pos[0] - pB.pos[0], pA.pos[1] - pB.pos[1], pA.pos[2] - pB.pos[2]).GetLength();
-  lenBC = math::Vector3(pB.pos[0] - pC.pos[0], pB.pos[1] - pC.pos[1], pB.pos[2] - pC.pos[2]).GetLength();
-  lenAC = math::Vector3(pA.pos[0] - pC.pos[0], pA.pos[1] - pC.pos[1], pA.pos[2] - pC.pos[2]).GetLength();
-  //printf("[TargetScan] AB %lf BC %lf AC %lf\n", lenAB, lenBC, lenAC);
+  int i = 0;
+  int j = 0;
+
+  for(i; i < 2; i++) {
+    for (j; j < 3; j++) {
+      if(!angDectedtedList[i][j]) {
+        //detecte incompletly
+        return;
+      }
+    }
+  }
+
+  //calculate coordinate
+
+  //publish coordinate
 }
 
 void TargetScan::Scan() {
@@ -130,21 +141,18 @@ void TargetScan::Scan() {
         angList[0][0] = (time - sync_t) * SCAN_ANGULAR_VEL;
         printf("angA' angA [%f %f]\n", -angR[1], angList[0][0]);
         angDectedtedList[0][0] = true;
-        //publish
       }
 
       if(!angDectedtedList[0][1] && fabs(angB - fabs(angR[1])) < 0.00005) {
         angList[0][1] = (time - sync_t) * SCAN_ANGULAR_VEL;
         printf("angB' angB [%f %f]\n", -angR[1], angList[0][1]);
         angDectedtedList[0][1] = true;
-        //publish
       }
 
       if(!angDectedtedList[0][2] && fabs(angC - fabs(angR[1])) < 0.00005) {
         angList[0][2]= (time - sync_t) * SCAN_ANGULAR_VEL;
         printf("angC' angC [%f %f]\n", -angR[1], angList[0][2]);
         angDectedtedList[0][2] = true;
-        //publish
       }
 
     } else if (fs == HFrame){
@@ -161,23 +169,22 @@ void TargetScan::Scan() {
         angList[1][0]= (time - sync_t) * SCAN_ANGULAR_VEL;
         printf("angA' angA [%f %f]\n", angR[2], angList[1][0]);
         angDectedtedList[1][0] = true;
-        //publish
       }
 
       if(!angDectedtedList[1][1] && fabs(angB - fabs(angR[2])) < 0.00005) {
         angList[1][1]= (time - sync_t) * SCAN_ANGULAR_VEL;
         printf("angB' angB [%f %f]\n", angR[2], angList[1][1]);
         angDectedtedList[1][1] = true;
-        //publish
       }
 
       if(!angDectedtedList[1][2] && fabs(angC - fabs(angR[2])) < 0.00005) {
         angList[1][2] = (time - sync_t) * SCAN_ANGULAR_VEL;
         printf("angC' angC [%f %f]\n", angR[2], angList[1][2]);
         angDectedtedList[1][2] = true;
-        //publish
       }
    }
+
+    coorUpdate();
 
     usleep(100);
   }
