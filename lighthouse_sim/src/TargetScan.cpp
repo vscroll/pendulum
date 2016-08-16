@@ -109,6 +109,48 @@ void TargetScan::coorUpdate() {
 
   //calculate coordinate
 
+  /*
+     |z
+     |  /P
+     | /
+     |/_|b_______y
+    /-\ |
+   / a \
+  /x    \
+
+   *------->  ---------------------------------->
+   *(x,y,x) = (cos(b)*cos(a), cos(b)sin(a),sin(b))
+  */
+
+  //calculate angular between two lines
+  double x0 = cos(angList[0][0])*cos(angList[1][0]);
+  double y0 = cos(angList[0][0])*sin(angList[1][0]);
+  double z0 = sin(angList[0][0]);
+
+  double x1 = cos(angList[0][1])*cos(angList[1][1]);
+  double y1 = cos(angList[0][1])*sin(angList[1][1]);
+  double z1 = sin(angList[0][1]);
+
+  double len0 = x0*x0+y0*y0+z0*z0;
+  double len1 = x1*x1+y1*y1+z1*z1;
+  double x = x0*x1+y0*y1+z0*z1;
+
+  double cosa = x / (sqrtf(len0)*sqrtf(len1));
+  double ang1 = acos(cosa) * 57.3;
+  math::Pose pA = linkA->GetWorldCoGPose();
+  math::Pose pB = linkB->GetWorldCoGPose();
+  math::Pose pR = rayLink->GetWorldCoGPose();
+
+  math::Vector3 OA = pA.pos - pR.pos;
+  math::Vector3 OB = pB.pos - pR.pos;
+  double len02 = OA[0]*OA[0]+OA[1]*OA[1]+OA[2]*OA[2];
+  double len12 = OB[0]*OB[0]+OB[1]*OB[1]+OB[2]*OB[2];
+  double x2 = OA[0]*OB[0]+OA[1]*OB[1]+OA[2]*OB[2];
+  double cosa2 = x2 / (sqrtf(len02)*sqrtf(len12));
+  double ang2 = acos(cosa2) * 57.3;
+
+  printf("OA[%f %f %f]\nOB[%f %f %f]\nANG1 %f ANG2 %f\n", OA[0], OA[1], OA[2], OB[0], OB[1],OB[2], ang1, ang2);
+
   //publish coordinate
 }
 
