@@ -80,7 +80,7 @@ void TargetScan::updateSyncTime() {
   double time = current_time.Double();
   sync_t = time;
   memset(angDectedtedList, 0, sizeof(angDectedtedList));
-  memset(angList, 0, sizeof(angList));
+  //memset(angList, 0, sizeof(angList));
   //printf("[TargetScan]Sync time %lf\n", time);
 }
 
